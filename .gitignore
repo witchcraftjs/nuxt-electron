@@ -1,0 +1,20 @@
+node_modules
+playground/node_modules
+*.log*
+
+dist
+.dist
+.nuxt
+.output
+.data
+.build-*
+.user-data-dir
+
+.env
+
+# Testing
+reports
+coverage
+*.lcov
+.nyc_output
+

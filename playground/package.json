@@ -1,0 +1,34 @@
+{
+	"private": true,
+	"name": "@witchcraft/nuxt-electron-playground",
+	"type": "module",
+	"main": ".dist/electron/build/main.cjs",
+	"scripts": {
+		"dev": "nuxi dev",
+		"build": "nuxi build",
+		"preview": "nuxt preview .dist/web",
+		"======= electron": "=======",
+		"dev:electron": "AUTO_OPEN=electron npm run dev",
+		"build:electron": "BUILD_ELECTRON=true npm run build",
+		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder",
+		"preview:electron": "PUBLIC_SERVER_API_URL=http://localhost:3000 electron ."
+	},
+	"@comments": {
+		"scripts": {
+			"build:electron:pack": "APP_VERSION is because electron-builder requires some app version, see electron-builder.json5",
+			"preview:electron": "Careful using `electron .`, some paths might not be what you expect."
+		}
+	},
+	"dependencies": {
+		"@witchcraft/nuxt-logger": "^0.0.0",
+		"@witchcraft/nuxt-electron": "^0.0.0",
+		"nuxt": "^3.13.2",
+		"pino": "^9.4.0",
+		"pino-pretty": "^11.2.2",
+		"thread-stream": "^3.1.0"
+	},
+	"devDependencies": {
+		"electron": "^32.1.2",
+		"electron-builder": "^25.0.5"
+	}
+}

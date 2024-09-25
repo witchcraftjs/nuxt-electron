@@ -1,0 +1,37 @@
+// https://www.electron.build/configuration/configuration
+
+{
+	"appId": "com.electron.app",
+	"productName": "app",
+	"executableName": "app",
+	"asar": false,
+	"directories": {
+		"output": ".dist/electron/release"
+	},
+	"files": [
+			".dist/electron/build/**/*",
+			".dist/electron/.output/public/**/*"
+		],
+	"linux": {
+		"artifactName": "${productName}_${version}.${ext}",
+		"target":[ "dir" ]
+	},
+	"mac": {
+		"artifactName": "${productName}_${version}.${ext}",
+		"target": [ "dmg" ]
+	},
+	"win": {
+		"target": [ { "target": "nsis", "arch": [ "x64" ] } ],
+		"artifactName": "${productName}_${version}.${ext}"
+	},
+	"nsis": {
+		"oneClick": false,
+		"perMachine": false,
+		"allowToChangeInstallationDirectory": true,
+		"deleteAppDataOnUninstall": false
+	},
+	// temporary workaround for the fact we don't have a version
+	extraMetadata: {
+		version: "process.env.APP_VERSION"
+	}
+}
