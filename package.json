@@ -1,0 +1,93 @@
+{
+	"name": "@witchcraft/nuxt-electron",
+	"version": "0.0.0",
+	"description": "Nuxt module for working with electron.",
+	"repository": "witchcraftjs/nuxt-electron",
+	"license": "MIT",
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		".": {
+			"types": "./dist/types.d.mts",
+			"import": "./dist/module.mjs"
+		},
+		"./electron": {
+			"types": "./dist/runtime/electron/index.d.ts",
+			"import": "./dist/runtime/electron/index.js"
+		},
+		"./genDevDesktop": {
+			"import": "./genDevDesktop.js"
+		}
+	},
+	"files": [
+		"src",
+		"dist",
+		"genDevDesktop.js"
+	],
+	"scripts": {
+		"prepare": "husky && cd playground && pnpm i",
+		"build": "nuxt-module-build prepare && nuxt-module-build build && nuxi build playground",
+		"build:only": "nuxt-module-build build",
+		"dev": "nuxi dev playground",
+		"dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+		"lint": "eslint \"{src,test,playground/app}/**/*.{ts,vue}\" \"*.{js,cjs,mjs,ts}\"",
+		"lint:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest watch"
+	},
+	"dependencies": {
+		"@alanscodelog/utils": "^6.0.1",
+		"@nuxt/kit": "^4.0.3",
+		"@witchcraft/nuxt-utils": "^0.2.1",
+		"defu": "^6.1.4",
+		"es-toolkit": "^1.39.10",
+		"vite-plugin-electron": "^0.29.0",
+		"vite-plugin-externalize-deps": "^0.9.0"
+	},
+	"peerDependencies": {
+		"@witchcraft/ui": "^0.2.1",
+		"unplugin-icons": "^22.1.0"
+	},
+	"peerDependenciesMeta": {
+		"unplugin-icons": {
+			"optional": true
+		},
+		"@witchcraft/ui": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@alanscodelog/eslint-config": "^6.3.0",
+		"@alanscodelog/semantic-release-config": "^5.0.4",
+		"@alanscodelog/tsconfigs": "^6.1.0",
+		"@nuxt/eslint-config": "^1.9.0",
+		"@nuxt/module-builder": "^1.0.2",
+		"@nuxt/schema": "^4.0.3",
+		"@nuxt/test-utils": "^3.19.2",
+		"@types/node": "latest",
+		"@witchcraft/ui": "^0.2.1",
+		"changelogen": "^0.6.2",
+		"electron": "^34.5.8",
+		"eslint": "^9.34.0",
+		"husky": "^9.1.7",
+		"json5": "^2.2.3",
+		"nuxt": "^4.0.3",
+		"typescript": "^5.8.3",
+		"unplugin-icons": "^22.2.0",
+		"vitest": "^3.2.4",
+		"vue-tsc": "^3.0.6"
+	},
+	"release": {
+		"extends": [
+			"@alanscodelog/semantic-release-config"
+		]
+	},
+	"commitlint": {
+		"extends": [
+			"@alanscodelog"
+		]
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

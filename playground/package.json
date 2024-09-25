@@ -1,0 +1,39 @@
+{
+	"private": true,
+	"name": "@witchcraft/nuxt-electron-playground",
+	"type": "module",
+	"main": ".dist/electron/build/main.mjs",
+	"scripts": {
+		"dev": "nuxi dev",
+		"build": "nuxi build",
+		"preview": "nuxt preview .dist/web",
+		"update-dep": "cd ../ && pnpm build:only && cd playground && pnpm update @witchcraft/nuxt-electron",
+		"======= electron": "=======",
+		"dev:electron": "AUTO_OPEN=electron pnpm dev",
+		"build:electron": "BUILD_ELECTRON=true pnpm build",
+		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder",
+		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js App",
+		"preview:electron": "concurrrently --kill-others \" pnpm preview\" \"PUBLIC_SERVER_URL=http://localhost:3000 electron .\""
+	},
+	"@comments": {
+		"scripts": {
+			"build:electron:pack": "APP_VERSION is because electron-builder requires some app version, see electron-builder.json5",
+			"preview:electron": "Careful using `electron .`, some paths might not be what you expect."
+		},
+		"dependencies": {
+			"@witchcraft/*(except self)": "TODO remove and properly install before publishing."
+		}
+	},
+	"dependencies": {
+		"@witchcraft/nuxt-electron": "file:../",
+		"@witchcraft/nuxt-logger": "^0.0.2",
+		"nuxt": "^4.0.3",
+		"thread-stream": "^3.1.0",
+		"electron": "^34.0.0"
+	},
+	"devDependencies": {
+		"concurrently": "^9.0.0",
+		"electron": "^34.0.0",
+		"electron-builder": "^25.0.5"
+	}
+}

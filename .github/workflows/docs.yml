@@ -1,0 +1,46 @@
+name: Docs 
+
+env:
+  USE_LOCKFILE: ${{ secrets.USE_LOCKFILE }}
+  ENABLE_DOCS: ${{ secrets.ENABLE_DOCS }}
+
+on:
+  push:
+    branches: [ master ]
+  repository_dispatch:
+    types: [ docs ]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["lts/*"]
+    steps:
+    - uses: actions/checkout@v4
+      if: "env.ENABLE_DOCS == 'true'"
+
+    - name: Setup
+      uses: ./.github/actions/composite-setup
+      if: "env.ENABLE_DOCS == 'true'"
+      with:
+        USE_LOCKFILE: ${{ env.USE_LOCKFILE }}
+
+    - name: Build 
+      uses: ./.github/actions/composite-build
+      if: "env.ENABLE_DOCS == 'true'"
+      with:
+        USE_LOCKFILE: ${{ env.USE_LOCKFILE }}
+
+    - run: pnpm doc
+      if: "env.ENABLE_DOCS == 'true'"
+
+    - name: Documentation
+      uses: crazy-max/ghaction-github-pages@v4
+      if: "env.ENABLE_DOCS == 'true'"
+      with:
+        jekyll: false
+        target_branch: gh-pages
+        build_dir: docs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
