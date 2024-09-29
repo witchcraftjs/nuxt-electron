@@ -373,8 +373,12 @@ export default defineNuxtModule<ModuleOptions>({
 			})
 			logger.debug(nuxt.options)
 		}
-
 		addImportsDir(resolve("runtime/composables"))
+		addRouteMiddleware({
+			name: "electron-proxies",
+			path: resolve("runtime/middleware/electronProxies"),
+			global: true,
+		})
 	},
 })
 

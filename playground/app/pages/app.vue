@@ -6,6 +6,7 @@ Electron Only
 		{{ data ?? error ?? status }}
 	</div>
 </div>
+<NuxtLink to="/serverOnly">Server Only</NuxtLink>
 </template>
 <script lang="ts" setup>
 /** Optional @witchcraft/nuxt-logger usage */

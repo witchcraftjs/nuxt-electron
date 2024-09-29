@@ -50,6 +50,7 @@ const serverUrl = process.env.PUBLIC_SERVER_API_URL ?? (
 	: "")
 const proxies = {
 	"/api": serverUrl,
+	"/serverOnly": serverUrl,
 }
 logger.debug({ ns: "main:proxies", message: proxies })
 
