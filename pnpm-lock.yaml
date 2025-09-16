@@ -37,8 +37,8 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4(typescript@5.9.2)
       '@alanscodelog/tsconfigs':
-        specifier: ^6.1.0
-        version: 6.1.0
+        specifier: ^6.2.0
+        version: 6.2.0
       '@nuxt/eslint-config':
         specifier: ^1.9.0
         version: 1.9.0(@typescript-eslint/utils@8.42.0(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2))(@vue/compiler-sfc@3.5.21)(eslint-import-resolver-node@0.3.9)(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2)
@@ -104,8 +104,8 @@ packages:
     resolution: {integrity: sha512-c+Jz8PzA1/f5pcnX79oekDAeAt2hunaCF/XtmEIgNDDjlInC1kwBv1kkew+7WOTXWp+71qKhZ6Xk0eQqIsL5Pw==}
     engines: {node: '>=20'}
 
-  '@alanscodelog/tsconfigs@6.1.0':
-    resolution: {integrity: sha512-orwpGGW1RsDdPHzyTXGDfrMtpB/ci0g5D717JSckL+36baek9zJAVPj44otEvWbMVSl849tbkkP5qUgPD/Xnwg==}
+  '@alanscodelog/tsconfigs@6.2.0':
+    resolution: {integrity: sha512-DAGIlj1aJ7oCiNnemx6VLZeOHICMjf2YSxC8VI/uAW+IKpBHQQ1S0udxvPeLYOPgZY69K90Wx+F3jd0clSRDeA==}
     engines: {node: '>=20.0.0'}
 
   '@alanscodelog/utils@6.0.1':
@@ -6083,7 +6083,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@alanscodelog/tsconfigs@6.1.0': {}
+  '@alanscodelog/tsconfigs@6.2.0': {}
 
   '@alanscodelog/utils@6.0.1': {}
 

@@ -7,7 +7,6 @@ import {
 	createResolver,
 	defineNuxtModule,
 	extendRouteRules,
-	installModule,
 	useLogger
 } from "@nuxt/kit"
 import { createConstantCaseVariables, nuxtFileBasedRouting, nuxtRemoveUneededPages, nuxtRerouteOutputTo } from "@witchcraft/nuxt-utils/utils"
@@ -20,6 +19,8 @@ import type { ViteDevServer } from "vite"
 import { build, type ElectronOptions, startup } from "vite-plugin-electron"
 import { notBundle } from "vite-plugin-electron/plugin"
 import { externalizeDeps } from "vite-plugin-externalize-deps"
+
+import pkg from "../package.json" with { type: "json" }
 
 // https://github.com/electron-vite/vite-plugin-electron/issues/251#issuecomment-2360153184
 startup.exit = async () => {
@@ -172,6 +173,11 @@ export default defineNuxtModule<ModuleOptions>({
 		additionalViteDefinesToCopy: [],
 		notBundleOptions: {}
 	},
+	moduleDependencies: {
+		"@witchcraft/ui/nuxt": {
+			version: pkg.dependencies["@witchcraft/ui"]
+		}
+	},
 	async setup(options, nuxt) {
 		if (!options.enable) { return }
 		const moduleName = "@witchcraft/nuxt-electron"
@@ -182,7 +188,6 @@ export default defineNuxtModule<ModuleOptions>({
 			global: true,
 			path: resolve("runtime/components")
 		})
-		await installModule("@witchcraft/ui/nuxt", (nuxt.options as any).witchcraftUi)
 
 		addTemplate({
 			filename: "witchcraft-electron.css",
