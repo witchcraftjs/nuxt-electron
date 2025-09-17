@@ -36,17 +36,17 @@
 		"test:watch": "vitest watch"
 	},
 	"dependencies": {
-		"@alanscodelog/utils": "^6.0.1",
+		"@alanscodelog/utils": "^6.0.2",
 		"@nuxt/kit": "^4.0.3",
-		"@witchcraft/nuxt-utils": "^0.2.1",
-		"@witchcraft/ui": "^0.2.1",
+		"@witchcraft/nuxt-utils": "^0.3.2",
+		"@witchcraft/ui": "^0.3.1",
 		"defu": "^6.1.4",
 		"es-toolkit": "^1.39.10",
 		"vite-plugin-electron": "^0.29.0",
 		"vite-plugin-externalize-deps": "^0.9.0"
 	},
 	"peerDependencies": {
-		"@witchcraft/ui": "^0.2.1",
+		"@witchcraft/ui": "^0.3.1",
 		"unplugin-icons": "^22.1.0"
 	},
 	"peerDependenciesMeta": {
@@ -58,7 +58,7 @@
 		}
 	},
 	"devDependencies": {
-		"@alanscodelog/eslint-config": "^6.3.0",
+		"@alanscodelog/eslint-config": "^6.3.1",
 		"@alanscodelog/semantic-release-config": "^5.0.4",
 		"@alanscodelog/tsconfigs": "^6.2.0",
 		"@nuxt/eslint-config": "^1.9.0",
@@ -67,13 +67,13 @@
 		"@nuxt/test-utils": "^3.19.2",
 		"@types/node": "latest",
 		"changelogen": "^0.6.2",
-		"electron": "^34.5.8",
+		"electron": "^38.0.0",
 		"eslint": "^9.34.0",
 		"husky": "^9.1.7",
 		"json5": "^2.2.3",
 		"nuxt": "^4.0.3",
 		"typescript": "^5.8.3",
-		"unplugin-icons": "^22.2.0",
+		"unplugin-icons": "^22.3.0",
 		"vitest": "^3.2.4",
 		"vue-tsc": "^3.0.6"
 	},
