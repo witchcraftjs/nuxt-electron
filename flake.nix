@@ -1,70 +1,63 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    devenv.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     systems.url = "github:nix-systems/default";
-    devenv.url = "github:cachix/devenv";
+    devenv = {
+      url = "github:cachix/devenv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # does not follow anything
+    flake-utils.url = "github:numtide/flake-utils";
+    utils = {
+      url = "github:alanscodelog/nix-devenv-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-
   nixConfig = {
     extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-    # this must be configured in /etc/nix/nix.conf
-    # see https://nix.dev/manual/nix/2.18/command-ref/conf-file#conf-substituters
     extra-substituters = "https://devenv.cachix.org";
   };
-
-  outputs = { self, nixpkgs, devenv, systems, ... } @ inputs:
+  outputs =
+    { self
+    , nixpkgs
+    , devenv
+    , systems
+    , utils
+    , ...
+    } @ inputs:
     let
       forEachSystem = nixpkgs.lib.genAttrs (import systems);
     in
     {
       packages = forEachSystem (system: {
         devenv-up = self.devShells.${system}.default.config.procfileScript;
+        devenv-test = self.devShells.${system}.default.config.test;
       });
 
       devShells = forEachSystem
         (system:
           let
-            pkgs = import nixpkgs
-              {
-                inherit system;
-                config = { };
-              };
-          in
-          let
-            dir = "";
-            cwd = builtins.getEnv "PWD" + "/" + dir;
+            overlay = final: prev: { };
+            pkgs = import nixpkgs {
+              inherit system;
+              overlays = [ overlay ];
+            };
           in
           {
             default = devenv.lib.mkShell {
               inherit inputs pkgs;
-
               modules =
+                let
+                in
                 [
-                  ({ pkgs, ... }:
-                    let
-                      electron = pkgs.electron_34-bin;
-                    in
-                    {
-                      packages = [
-                        electron
-                      ];
-                      env.TERM = "wezterm";
-                      env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
-                      env.ELECTRON_OVERRIDE_DIST_PATH = "${electron}/bin/";
-
-                      scripts.devInfo = {
-                        description = "Prints out some information about the environment.";
-                        exec = ''
-                          echo "Environment Package Versions:"
-                          echo "node `${pkgs.nodejs_24}/bin/node --version`"
-                          echo "electron `${electron}/bin/electron --version`"
-                        '';
-                      };
-                    })
+                  utils.devenvModule
+                  ({ pkgs, config, ... }: {
+                    custom.js.nodejs.package = pkgs.nodejs_24;
+                    custom.electron.enabled = true;
+                    custom.electron.package = pkgs.electron_38-bin;
+                  })
                 ];
             };
-
           });
     };
 }

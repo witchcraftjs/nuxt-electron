@@ -1492,7 +1492,7 @@ packages:
   '@witchcraft/nuxt-electron@file:..':
     resolution: {directory: .., type: directory}
     peerDependencies:
-      '@witchcraft/ui': ^0.2.1
+      '@witchcraft/ui': ^0.2.3
       unplugin-icons: ^22.1.0
     peerDependenciesMeta:
       '@witchcraft/ui':
