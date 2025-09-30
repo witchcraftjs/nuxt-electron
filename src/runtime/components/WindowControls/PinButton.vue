@@ -31,7 +31,7 @@
 			)
 			"
 		>
-			<i-octicon-pin-16/>
+			<iOcticonPin16/>
 		</WIcon>
 	</slot>
 </WButton>
@@ -39,6 +39,7 @@
 
 <script lang="ts" setup>
 import { twMerge } from "#imports"
+import iOcticonPin16 from "~icons/octicon/pin-16"
 
 const emit = defineEmits<{
 	(e: "action", action: "togglePin"): void
