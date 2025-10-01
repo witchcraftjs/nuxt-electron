@@ -1,0 +1,13 @@
+diff --git a/dist/chunks/build.mjs b/dist/chunks/build.mjs
+index 5fda3a794e76ff9286c3785d2df78fb9b02f5690..7129bd536875fa371f31f0c774c886e3e15f676e 100644
+--- a/dist/chunks/build.mjs
++++ b/dist/chunks/build.mjs
+@@ -54,7 +54,7 @@ const build = defineCommand({
+         {
+           input: "src/runtime/",
+           outDir: `${outDir}/runtime`,
+-          addRelativeDeclarationExtensions: true,
++          addRelativeDeclarationExtensions: false,
+           ext: "js",
+           pattern: [
+             "**",

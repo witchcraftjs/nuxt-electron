@@ -39,14 +39,14 @@
 		"@alanscodelog/utils": "^6.0.2",
 		"@nuxt/kit": "^4.0.3",
 		"@witchcraft/nuxt-utils": "^0.3.2",
-		"@witchcraft/ui": "^0.3.1",
+		"@witchcraft/ui": "^0.3.2",
 		"defu": "^6.1.4",
 		"es-toolkit": "^1.39.10",
 		"vite-plugin-electron": "^0.29.0",
 		"vite-plugin-externalize-deps": "^0.9.0"
 	},
 	"peerDependencies": {
-		"@witchcraft/ui": "^0.3.1",
+		"@witchcraft/ui": "^0.3.2",
 		"unplugin-icons": "^22.1.0"
 	},
 	"peerDependenciesMeta": {

@@ -27,7 +27,7 @@
 	"dependencies": {
 		"@witchcraft/nuxt-electron": "file:../",
 		"@witchcraft/nuxt-logger": "^0.0.2",
-		"@witchcraft/ui": "^0.3.1",
+		"@witchcraft/ui": "^0.3.2",
 		"electron": "^34.0.0",
 		"nuxt": "^4.0.3",
 		"thread-stream": "^3.1.0"
