@@ -65,15 +65,15 @@ export interface ModuleOptions {
 	/** Extra cli arguments to launch electron with in dev mode */
 	extraCliArgs: string[]
 	/**
-	 * If set, adds `--user-data-dir ${devUserDataDir}` to the cli arguments in development mode.
+	 * If set, adds `--dev-user-data-dir ${devUserDataDir}` to the cli arguments in development mode.
 	 *
-	 * You will then need to parse this in main.ts, a `useDevDataDir` function is provided for this. This does not do any advanced parsing, just takes the next argument after `--user-data-dir` so the path must not contain spaces.
+	 * You will then need to parse this in main.ts, a `useDevDataDir` function is provided for this. This does not do any advanced parsing, just takes the next argument after `--dev-user-data-dir` so the path must not contain spaces.
 	 * ```ts
 	 * const userDataDir = useDevDataDir() ?? app.getPath("userData")
 	 *
 	 * @default "~~/.user-data-dir"
 	 */
-	devUserDataDir: string
+	devUserDataDir: string | null
 	/**
 	 * The script to run to build/pack the electron app.
 	 *
@@ -159,7 +159,7 @@ export default defineNuxtModule<ModuleOptions>({
 		srcDir: "~~/app-electron",
 		electronBuildDir: "~~/.dist/electron",
 		nonElectronNuxtBuildDir: "~~/.dist/web/.output",
-		devUserDataDir: "~~/.user-data-dir",
+		devUserDataDir: undefined,
 		electronRoute: "/app",
 		autoOpen: process.env.AUTO_OPEN?.includes("electron"),
 		electronBuildPackScript: "npm run build:electron:pack",
@@ -179,6 +179,11 @@ export default defineNuxtModule<ModuleOptions>({
 		}
 	},
 	async setup(options, nuxt) {
+		// if the user explicitly sets it to null we want it to stay null
+		if (options.devUserDataDir === undefined) {
+			options.devUserDataDir = "~~/.user-data-dir"
+		}
+
 		if (!options.enable) { return }
 		const moduleName = "@witchcraft/nuxt-electron"
 		const logger = useLogger(moduleName)
