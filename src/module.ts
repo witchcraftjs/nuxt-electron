@@ -380,7 +380,7 @@ export default defineNuxtModule<ModuleOptions>({
 				...(process.env.NODE_ENV !== "production"
 					&& devUserDataDir
 					? [
-							"--user-data-dir",
+							"--dev-user-data-dir",
 							devUserDataDir
 						]
 					: []),
