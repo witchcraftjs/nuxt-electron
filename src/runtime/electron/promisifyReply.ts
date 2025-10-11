@@ -27,7 +27,10 @@ export function promisifyReply<
 	) => {
 		const win = getEventWindow(e, { defaultToFocused })
 		if (!win) {
-			throw new Error("No window to send reply to.")
+			const err = new Error("No window to send reply to.")
+			// eslint-disable-next-line no-console
+			console.error(err, { key, promiseId, args })
+			throw err
 		}
 		if (debug) {
 			// eslint-disable-next-line no-console
