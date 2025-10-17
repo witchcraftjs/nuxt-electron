@@ -9,7 +9,7 @@ settings:
   catalogMode: strict
 catalog:
   "@alanscodelog/eslint-config": ^6.3.1
-  "@alanscodelog/semantic-release-config": ^5.0.4
+  "@alanscodelog/semantic-release-config": ^6.0.0
   "@alanscodelog/tsconfigs": ^6.2.0
   "@alanscodelog/utils": ^6.0.2
   "@nuxt/eslint-config": ^1.9.0
@@ -17,7 +17,7 @@ catalog:
   "@nuxt/module-builder": ^1.0.2
   "@nuxt/schema": ^4.0.3
   "@nuxt/test-utils": ^3.19.2
-  "@witchcraft/nuxt-logger": ^0.0.2
+  "@witchcraft/nuxt-logger": ^0.0.9
   "@witchcraft/nuxt-utils": ^0.3.2
   "@witchcraft/ui": ^0.3.2
   changelogen: ^0.6.2

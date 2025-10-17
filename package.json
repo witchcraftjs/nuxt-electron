@@ -25,7 +25,7 @@
 		"genDevDesktop.js"
 	],
 	"scripts": {
-		"prepare": "husky && pnpm dev:prepare",
+		"prepare": "husky && pnpm build",
 		"build": "nuxt-module-build prepare && nuxt-module-build build && nuxi build playground",
 		"build:only": "nuxt-module-build build",
 		"dev": "nuxi dev playground",
