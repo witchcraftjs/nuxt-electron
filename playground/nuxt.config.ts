@@ -2,8 +2,6 @@ export default defineNuxtConfig({
 	modules: [
 		"@witchcraft/ui",
 		"@witchcraft/nuxt-logger",
-		// the below also works, just remember to run the update-dep script and uncomment ../src/module above before attempting to use the file: linked module
-
 		"../src/module.ts"
 	],
 	devtools: { enabled: true },

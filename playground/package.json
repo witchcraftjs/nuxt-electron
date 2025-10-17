@@ -7,7 +7,6 @@
 		"dev": "nuxi dev",
 		"build": "nuxi build",
 		"preview": "nuxt preview .dist/web",
-		"update-dep": "cd ../ && pnpm build:only && cd playground && pnpm update @witchcraft/nuxt-electron",
 		"======= electron": "=======",
 		"dev:electron": "AUTO_OPEN=electron pnpm dev",
 		"build:electron": "BUILD_ELECTRON=true pnpm build",
@@ -25,16 +24,16 @@
 		}
 	},
 	"dependencies": {
-		"@witchcraft/nuxt-electron": "file:../",
-		"@witchcraft/nuxt-logger": "^0.0.2",
-		"@witchcraft/ui": "^0.3.2",
-		"electron": "^34.0.0",
-		"nuxt": "^4.0.3",
-		"thread-stream": "^3.1.0"
+		"@witchcraft/nuxt-electron": "workspace:*",
+		"@witchcraft/nuxt-logger": "catalog:",
+		"@witchcraft/ui": "catalog:",
+		"electron": "^38.0.0",
+		"nuxt": "catalog:",
+		"thread-stream": "catalog:"
 	},
 	"devDependencies": {
-		"concurrently": "^9.0.0",
-		"electron": "^34.0.0",
-		"electron-builder": "^25.0.5"
+		"concurrently": "catalog:",
+		"electron": "^38.0.0",
+		"electron-builder": "catalog:"
 	}
 }

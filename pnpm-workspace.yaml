@@ -1,3 +1,38 @@
+packages:
+  - ./
+  - playground/
 patchedDependencies:
-  '@nuxt/module-builder': patches/@nuxt__module-builder.patch
+  "@nuxt/module-builder": patches/@nuxt__module-builder.patch
 allowUnusedPatches: true
+settings:
+  cleanupUnusedCatalogs: false
+  catalogMode: strict
+catalog:
+  "@alanscodelog/eslint-config": ^6.3.1
+  "@alanscodelog/semantic-release-config": ^5.0.4
+  "@alanscodelog/tsconfigs": ^6.2.0
+  "@alanscodelog/utils": ^6.0.2
+  "@nuxt/eslint-config": ^1.9.0
+  "@nuxt/kit": ^4.0.3
+  "@nuxt/module-builder": ^1.0.2
+  "@nuxt/schema": ^4.0.3
+  "@nuxt/test-utils": ^3.19.2
+  "@witchcraft/nuxt-logger": ^0.0.2
+  "@witchcraft/nuxt-utils": ^0.3.2
+  "@witchcraft/ui": ^0.3.2
+  changelogen: ^0.6.2
+  concurrently: ^9.0.0
+  defu: ^6.1.4
+  electron-builder: ^25.0.5
+  es-toolkit: ^1.39.10
+  eslint: ^9.34.0
+  husky: ^9.1.7
+  json5: ^2.2.3
+  nuxt: ^4.0.3
+  thread-stream: ^3.1.0
+  typescript: ^5.8.3
+  unplugin-icons: ^22.3.0
+  vite-plugin-electron: ^0.29.0
+  vite-plugin-externalize-deps: ^0.9.0
+  vitest: ^3.2.4
+  vue-tsc: ^3.0.6

@@ -25,7 +25,7 @@
 		"genDevDesktop.js"
 	],
 	"scripts": {
-		"prepare": "husky && pnpm nuxt-module-build prepare && pnpm build:only && cd playground && pnpm i --ignore-scripts --ignore-workspace",
+		"prepare": "husky && pnpm dev:prepare",
 		"build": "nuxt-module-build prepare && nuxt-module-build build && nuxi build playground",
 		"build:only": "nuxt-module-build build",
 		"dev": "nuxi dev playground",
@@ -36,18 +36,18 @@
 		"test:watch": "vitest watch"
 	},
 	"dependencies": {
-		"@alanscodelog/utils": "^6.0.2",
-		"@nuxt/kit": "^4.0.3",
-		"@witchcraft/nuxt-utils": "^0.3.2",
-		"@witchcraft/ui": "^0.3.2",
-		"defu": "^6.1.4",
-		"es-toolkit": "^1.39.10",
-		"vite-plugin-electron": "^0.29.0",
-		"vite-plugin-externalize-deps": "^0.9.0"
+		"@alanscodelog/utils": "catalog:",
+		"@nuxt/kit": "catalog:",
+		"@witchcraft/nuxt-utils": "catalog:",
+		"@witchcraft/ui": "catalog:",
+		"defu": "catalog:",
+		"es-toolkit": "catalog:",
+		"vite-plugin-electron": "catalog:",
+		"vite-plugin-externalize-deps": "catalog:"
 	},
 	"peerDependencies": {
-		"@witchcraft/ui": "^0.3.2",
-		"unplugin-icons": "^22.1.0"
+		"@witchcraft/ui": "catalog:",
+		"unplugin-icons": "catalog:"
 	},
 	"peerDependenciesMeta": {
 		"unplugin-icons": {
@@ -58,24 +58,24 @@
 		}
 	},
 	"devDependencies": {
-		"@alanscodelog/eslint-config": "^6.3.1",
-		"@alanscodelog/semantic-release-config": "^5.0.4",
-		"@alanscodelog/tsconfigs": "^6.2.0",
-		"@nuxt/eslint-config": "^1.9.0",
-		"@nuxt/module-builder": "^1.0.2",
-		"@nuxt/schema": "^4.0.3",
-		"@nuxt/test-utils": "^3.19.2",
+		"@alanscodelog/eslint-config": "catalog:",
+		"@alanscodelog/semantic-release-config": "catalog:",
+		"@alanscodelog/tsconfigs": "catalog:",
+		"@nuxt/eslint-config": "catalog:",
+		"@nuxt/module-builder": "catalog:",
+		"@nuxt/schema": "catalog:",
+		"@nuxt/test-utils": "catalog:",
 		"@types/node": "latest",
-		"changelogen": "^0.6.2",
+		"changelogen": "catalog:",
 		"electron": "^38.0.0",
-		"eslint": "^9.34.0",
-		"husky": "^9.1.7",
-		"json5": "^2.2.3",
-		"nuxt": "^4.0.3",
-		"typescript": "^5.8.3",
-		"unplugin-icons": "^22.3.0",
-		"vitest": "^3.2.4",
-		"vue-tsc": "^3.0.6"
+		"eslint": "catalog:",
+		"husky": "catalog:",
+		"json5": "catalog:",
+		"nuxt": "catalog:",
+		"typescript": "catalog:",
+		"unplugin-icons": "catalog:",
+		"vitest": "catalog:",
+		"vue-tsc": "catalog:"
 	},
 	"release": {
 		"extends": [

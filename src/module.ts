@@ -175,7 +175,7 @@ export default defineNuxtModule<ModuleOptions>({
 	},
 	moduleDependencies: {
 		"@witchcraft/ui/nuxt": {
-			version: pkg.dependencies["@witchcraft/ui"]
+			version: "^0.3.2"
 		}
 	},
 	async setup(options, nuxt) {
