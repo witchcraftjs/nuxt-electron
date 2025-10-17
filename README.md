@@ -260,7 +260,7 @@ Note we would ideally also remove "/" from the prerender, but this requires manu
 
 A `routeRules` redirect won't work, because it will trigger a request to electron's file protocol handler which we don't know what to do with.
 
-A redirect from a page (e.i. `if (process.client && isElectron) { navigateTo("/app") }`) works, but it takes a little big of time to navigate. This is still needed for development redirecting, but not in production.
+A redirect from a page (e.i. `if (process.client && isElectron) { await navigateTo("/app") }`) works, but it takes a little big of time to navigate. This is still needed for development redirecting, but not in production.
 
 #### Build
 

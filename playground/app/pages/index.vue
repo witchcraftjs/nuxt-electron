@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 if (isElectron()) {
-	navigateTo("/app")
+	await navigateTo("/app")
 }
 </script>
