@@ -3,6 +3,11 @@ import JSON5 from "json5"
 import fs from "node:fs/promises"
 import path from "node:path"
 
+if (process.env.CI) {
+	console.log("Skipping desktop file generation in CI.")
+	process.exit(0)
+}
+
 if (["darwin", "linux"].includes(process.platform)) {
 	// eslint-disable-next-line no-console
 	console.log("Generating dev desktop file.")
