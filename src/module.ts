@@ -337,11 +337,12 @@ export default defineNuxtModule<ModuleOptions>({
 					copyFromVite.map(v => [v, viteConfig.define![v]])
 				),
 				...createConstantCaseVariables({
-					electronRoute,
-					electronProdUrl,
-					electronNuxtDir,
-					electronNuxtPublicDir,
-					electronBuildDir,
+					// on windows the backslashes in the paths must be double escaped
+					electronRoute: electronRoute.replaceAll("\\", "\\\\"),
+					electronProdUrl: electronProdUrl.replaceAll("\\", "\\\\"),
+					electronNuxtDir: electronNuxtDir.replaceAll("\\", "\\\\"),
+					electronNuxtPublicDir: electronNuxtPublicDir.replaceAll("\\", "\\\\"),
+					electronBuildDir: electronBuildDir.replaceAll("\\", "\\\\"),
 					// ...options.additionalElectronVariables,
 					// nuxt's runtimeConfig cannot be used in electron's main since it's built seperately
 					// also we must stringify ourselves since escaped double quotes are not preserved in the final output :/
