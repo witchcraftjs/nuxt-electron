@@ -114,7 +114,6 @@ Add the following to the package.json:
 		"dev:electron": "AUTO_OPEN=electron nuxi dev",
 		 // write a dev desktop file for linux, see below
 		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js YOURAPPNAMEK",
-		 // for the desktop file
 		"launch:electron": "electron .",
 		"build:electron": "BUILD_ELECTRON=true nuxi build",
 		"build:electron:no-pack": "SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
@@ -238,12 +237,19 @@ An isomorphic logger is also available for electron, see [@witchcraft/nuxt-logge
 
 A script is provided for use with electron-builder to generate a dev desktop file for linux.
 
-It will create a desktop file named `dev-YOURAPPNAME.desktop`, put it in `~/.local/share/applications/` and re-install it with `xdg-desktop-menu un/install`.
-
-The desktop's exec is set to run bash, cd into the project dir and run `npm run launch:electron`. You can pass a second parameter to the script to use a different package.json script.
-
 This is useful for when registering deep links in the app as these require a desktop file to work on linux.
 
+It will create a desktop file named `dev-YOURAPPNAME.desktop`, put it in `~/.local/share/applications/` and re-install it with `xdg-desktop-menu un/install`.
+
+The desktop's exec is set to run bash, cd into the project dir and run `npm run launch:electron`. 
+
+You can pass a second parameter to the script to use a different package.json script.
+
+And a third parameter pointing to your config if it's not in one of the searched locations:
+
+- `electron-builder-config.js`
+- `electron-builder.json5`
+- `electron-builder.json`
 
 ## Misc Notes
 
