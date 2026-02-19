@@ -18,7 +18,7 @@ jobs:
         node-version: ["lts/*"]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Setup
       uses: ./.github/actions/composite-setup
