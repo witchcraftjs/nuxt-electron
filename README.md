@@ -29,16 +29,22 @@
 
 # Playground
 
-There is a playground available but it only works locally due to electron.
+There is a playground with a comprehensive example, but it only works locally due to electron.
 
 ## Install
 ```bash
 pnpx nuxi module add @witchcraft/nuxt-electron
 
 ```
-The library installs the @witchcraft/ui module to use it's css config and twMerge.
+### Components
 
-If using the components, you should add the library to your tailwind css as a source:
+If using any of the provided components, they rely on the @witchcraft/ui module.
+
+If not, ignore it.
+
+This module installs it to use it's css config and twMerge.
+
+All you need to do is add the electron module to your tailwind css as a source:
 ```css [assets/css/tailwind.css]
 @source "../../../.nuxt/witchcraft-electron.css";
 ```
@@ -62,7 +68,11 @@ For whatever electron builder you want to use, you must point it at the correct 
 
 For `electron-builder` with the default directories the module uses and to have all the artifacts in one folder, add:
 
-```
+
+<details>
+<summary>Electron Builder Config Example</summary>
+
+```json
 {
 	"directories": {
 		"output": ".dist/electron/release"
@@ -85,9 +95,14 @@ For `electron-builder` with the default directories the module uses and to have 
 	},
 }
 ```
+</details>
 
 Add the following to the package.json:
-```jsonc
+
+<details>
+<summary>Package.json</summary>
+
+```json
 // package.json
 {
 	"main": ".dist/electron/build/main.cjs",
@@ -104,26 +119,32 @@ Add the following to the package.json:
 		"build:electron": "BUILD_ELECTRON=true nuxi build",
 		"build:electron:no-pack": "SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
 		"build:electron:pack": "electron-builder",
-		"preview:electron": "concurrrently --kill-others \" npm run preview\" \"npm run launch:electron\""
+		"preview:electron": "concurrrently --kill-others \" npm run preview\" \"PUBLIC_SERVER_URL=http://localhost:3000 npm run launch:electron\""
 	}
 }
 ```
+</details>
 
+#### To Develop
+
+Run `pnpm dev:electron`. This will both launch nuxt and open electron.
+
+Alternatively, run the server and electron seperately:
+
+Run `pnpm dev` to start the nuxt dev server. The dev version of the app will be written to `.dist/electron/build/main.cjs`.
+
+In a seperate terminal run `pnpm launch:electron` to start the electron app (this will do `electron .` which will run the configured `main` property, aka `.dist/electron/build/main.cjs`).
+
+##### Notes
 By default the module will not open electron. You must set `process.env.AUTO_OPEN` to include the string `electron` or set `autoOpen `in the options to true, hence the seperate `dev:electron` script.
 
 The idea is if you use other platform modules as well, you'd do `AUTO_OPEN=electron,android`, etc. for each module you wanted to actually have auto open.
 
-Note that `preview:electron` requires `preview` be run at the same time to see how the `/api` route gets correctly proxied (to localhost in this case, see `main.ts` code below for how this is accomplished). In production, as configured below, `PUBLIC_SERVER_URL` will do nothing.
+#### To Build
 
-```jsonc
-{
-	"scripts": {
-		"preview:electron:dev": "concurrrently --kill-others \" npm run dev\" \"PUBLIC_SERVER_URL=http://localhost:3000 electron .\"",
-		"preview:electron:prod": "electron .\""
+Build the regular nuxt app with `pnpm build` then build the electron app with `pnpm build:electron` or `pnpm build:electron:no-pack` (if you just want to test, you can skip the packing).
 
-	}
-}
-```
+You can launch the build with `pnpm preview:electron`. In this case, the build written to `.dist/electron/build/main.cjs` is the **production** build, so the same script now opens the production version of the electron app. If using the example below, **this will proxy api requests to the real server** as the it's setup to hard-code `process.env.PUBLIC_SERVER_URL` in production. You can handle this different if you want.
 
 ### Electron Files
 
@@ -166,10 +187,16 @@ export default defineNuxtConfig({
 	],
 	electron: {
 		additionalElectronVariables: {
-			// required for getPaths to work in production, see it for details
+			// this will hardcode `process.env.PUBLIC_SERVER_URL` to the server url in production
+			// see getPaths, but it is the first variable checked, if it's not set, getPaths falls back to
+			// process.env.PUBLIC_SERVER_URL then process.env.VITE_DEV_SERVER_URL
 			publicServerUrl: process.env.NODE_ENV === "production" 
+			// note the quotes for strings! this is a literal replacement that happens
+			// you also cannot access process.env dynamically if you want this to work (e.g. process.env[name])
 			? `"mysite.com"` 
 			: `undefined`
+			// or you can allow overriding by the user setting the env
+			// publicServerUrl: `process.env.PUBLIC_SERVER_URL ?? "mysite.com"`
 		}
 	}
 })
@@ -180,8 +207,7 @@ A full example, including usage with `@witchcraft/nuxt-logger` is available in t
 
 **NOTE: The proxies only work for api calls. They do not work for pages.**
 
-Proxying server only page routes seems possible but complicated because each route's resource calls must also be proxied. I don't think it's worth the pain. It's easier to make sure the electron app never accesses server only routes.
-
+Proxying server only page routes seems possible but complicated because each route's resource calls must also be proxied. I don't think it's worth the pain. It's easier to make sure the electron app never access server only routes.
 
 ### Runtime Config
 

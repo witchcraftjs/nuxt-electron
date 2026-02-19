@@ -18,8 +18,7 @@ export default defineNuxtConfig({
 	electron: {
 		additionalElectronVariables: {
 			publicServerUrl: process.env.NODE_ENV === "production"
-			// would be yoursite.com in production
-				? `"localhost:3000"`
+				? `"https://yoursite.com"`
 				: `undefined`
 		},
 		electronBuildPackScript: "pnpm build:electron:pack",
