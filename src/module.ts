@@ -517,12 +517,28 @@ export default defineNuxtModule<ModuleOptions>({
 
 			// the "/" is not technically needed but only if we properly split the chunks by pages and that was causing issues
 			nuxtRemoveUneededPages(nuxt, ["/", electronRoute, ...options.additionalRoutes!])
-			extendRouteRules(electronRoute, { ssr: false, prerender: true }, { override: true })
 
-			nuxt.options.router = defu(
-				nuxtFileBasedRouting().router,
-				(nuxt.options.router as any) ?? {}
-			)
+			nuxt.options.router.options ??= {}
+			nuxt.options.router.options.hashMode = false
+
+			extendRouteRules(electronRoute + "/**", {
+				prerender: true
+			}, { override: true })
+
+			for (const route of options.additionalRoutes) {
+				extendRouteRules(route, {
+					prerender: true
+				}, { override: true })
+			}
+
+
+			/* Nuxt in build mode won't generate this. And we need build mode so api calls aren't baked in. */
+			nuxt.hook("prerender:routes", ({ routes }) => {
+				for (const route of ["/404.html"]) {
+					routes.add(route)
+				}
+			})
+
 
 			nuxtRerouteOutputTo(nuxt, electronNuxtDir)
 

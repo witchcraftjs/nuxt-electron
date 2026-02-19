@@ -6,9 +6,9 @@ const electronMainDependencies = Object.keys(packageJson.dependencies)
 /** @type {import('electron-builder').Configuration} */
 export default {
 	appId: "com.electron.app",
-	productName: "app",
-	executableName: "app",
-	asar: false,
+	productName: "your-app-name",
+	executableName: "your-app-name",
+	asar: true,
 	directories: {
 		output: ".dist/electron/release"
 	},

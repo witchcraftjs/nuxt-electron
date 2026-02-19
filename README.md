@@ -11,9 +11,10 @@
 
 - :zap: Auto reloads/restarts electron on changes to the main/renderer code or nuxt server restarts.
 - :rocket: Api calls are proxied to the server.
-- :start: Route paths are not touched. Does not require static builds or changing baseURL/buildAssetsDir. 
+- :start: Rendering strategy isn't changed. Does not require static builds or changing baseURL/buildAssetsDir. 
 - :scissors: Trims server and non-electron routes from the electron bundle.
 - :open_file_folder: Modifies directory structure for easier multi-platform builds.
+- :snowflake: Nix Support - Playground contains an example flake for reproducible development and builds.
 - :hammer_and_wrench: Helpful Tools/Composables
 	- `isElectron` 
 	- Electron Only 
@@ -30,6 +31,27 @@
 # Playground
 
 There is a playground with a comprehensive example, but it only works locally due to electron.
+
+To try it:
+
+```bash
+git clone https://github.com/witchcraftjs/nuxt-electron.git
+pnpm i
+cd nuxt-electron/playground
+pnpm build && pnpm build:electron:no-pack
+pnpm preview:electron:dev
+```
+You can also do: 
+```bash
+pnpm build
+pnpm build:electron:pack
+# in one tab
+pnpm preview
+# in another tab
+OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 ./.dist/electron/release/linux-unpacked/your-app-name
+```
+
+If you're using nix the above should work in the dev shell. You can also do `nix run` but warning, this is like just building and doing `pnpm launch:electron` (see below).
 
 ## Install
 ```bash
@@ -124,16 +146,17 @@ Add the following to the package.json:
 	"scripts": {
 		"dev": "nuxi dev",
 		"build": "nuxi build",
-		"preview": "nuxt preview .dist/web",
+		"preview": "LOG_LEVEL=trace nuxt preview .dist/web",
 		"======= electron": "=======",
-		"dev:electron": "AUTO_OPEN=electron nuxi dev",
-		 // write a dev desktop file for linux, see below
-		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js YOURAPPNAMEK",
+		"dev:electron": "AUTO_OPEN=electron pnpm dev",
 		"launch:electron": "electron .",
-		"build:electron": "BUILD_ELECTRON=true nuxi build",
-		"build:electron:no-pack": "SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
-		"build:electron:pack": "electron-builder",
-		"preview:electron": "concurrrently --kill-others \" npm run preview\" \"PUBLIC_SERVER_URL=http://localhost:3000 npm run launch:electron\""
+		"launch:electron:dev": "LOG_LEVEL=trace OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 electron .",
+		"build:electron": "BUILD_ELECTRON=true pnpm build",
+		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder",
+		"build:electron:no-pack": "APP_VERSION=0.0.0 SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
+		// write a dev desktop file for linux, see below
+		"preview:electron:dev": "concurrently --kill-others \"pnpm preview\" \"sleep 2 && pnpm launch:electron:dev\"",
+		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js YOURAPPNAME",
 	}
 }
 ```
@@ -158,66 +181,69 @@ The idea is if you use other platform modules as well, you'd do `AUTO_OPEN=elect
 
 Build the regular nuxt app with `pnpm build` then build the electron app with `pnpm build:electron` or `pnpm build:electron:no-pack` (if you just want to test, you can skip the packing).
 
-You can launch the build with `pnpm preview:electron`. In this case, the build written to `.dist/electron/build/main.cjs` is the **production** build, so the same script now opens the production version of the electron app. If using the example below, **this will proxy api requests to the real server** as the it's setup to hard-code `process.env.PUBLIC_SERVER_URL` in production. You can handle this different if you want.
+In this case, the build written to `.dist/electron/build/main.cjs` is the **production** build.
 
-### Electron Files
+To run the built production server and the production app proxied to this server, use `pnpm preview:electron:dev`.
+
+Alternatively...
+
+You can run `pnpm launch:electron` to launch the production build in nearly exactly as a user would.
+
+CAREFUL though, **this will proxy api requests to the real server**.
+
+If you want to test against the local server build, run it with `pnpm preview` then run the app with `pnpm launch:electron:dev`.
+
+If you use the example code, it allows `OVERRIDE_PUBLIC_SERVER_URL` which allows the app to override which server the app proxies to and that's what the script is setting to allow this.
+
+You can handle this different if you want and *not* allow overriding the server url. Up to you. See below.
+
+### Files
 
 In main to get the correct paths during build and dev, use the `getPaths` helper.
 
 To get the dev user data dir, use the `useDevDataDir` helper.
 
-We also need to create the nuxt `file://` protocol handler for every window and configure the proxies for server calls.
- 
-```ts
-// main.ts
+We also need to create the nuxt `app://` protocol handler for every window and configure the proxies for server calls.
 
-import { getPaths, useDevDataDir, createNuxtFileProtocolHandler } from "@witchcraft/nuxt-electron/electron"
 
-const paths = getPaths()
-const userDataDir = useDevDataDir() ?? app.getPath("userData")
+See full example in [main.ts](https://github.com/witchcraftjs/nuxt-electron/blob/master/playground/app-electron/main.ts).
 
-// when creating a window later 
-const win = new BrowserWindow({
-	title: "...",
-	webPreferences: {
-		preload: paths.preloadPath
-	}
-})
 
-// proxy /api requests to the real server 
-const proxies = {
-	"/api": paths.publicServerUrl,
-}
+For the nuxt config, here's the minimum you need, the one in the playground contains additional options for testing and debugging:
 
-// for every session partition 
-createNuxtFileProtocolHandler(win.webContents.session, paths.nuxtDir, proxies)
-await win.loadURL(paths.windowUrl)
-```
-
+<details>
+<summary>nuxt.config.ts</summary>
+	
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
 	modules: [
 		"@witchcraft/nuxt-electron",
+		/** Optional */
+		"@witchcraft/ui",
+		/** Optional */
+		"@witchcraft/nuxt-logger",
 	],
+			dir: ".dist/web/.output",
+			serverDir: ".dist/web/.output/server",
+			publicDir: ".dist/web/.output/public"
+		},
+	},
 	electron: {
 		additionalElectronVariables: {
 			// this will hardcode `process.env.PUBLIC_SERVER_URL` to the server url in production
-			// see getPaths, but it is the first variable checked, if it's not set, getPaths falls back to
-			// process.env.PUBLIC_SERVER_URL then process.env.VITE_DEV_SERVER_URL
-			publicServerUrl: process.env.NODE_ENV === "production" 
+			// this means getPaths().publicServerUrl will always return your site url (see getPaths) unless you allow getPaths an override (see it for details)
+			publicServerUrl: process.env.NODE_ENV === "production"
 			// note the quotes for strings! this is a literal replacement that happens
 			// you also cannot access process.env dynamically if you want this to work (e.g. process.env[name])
-			? `"mysite.com"` 
-			: `undefined`
-			// or you can allow overriding by the user setting the env
-			// publicServerUrl: `process.env.PUBLIC_SERVER_URL ?? "mysite.com"`
-		}
+				? `"https://yoursite.com"`
+				: `undefined`
+		},
+		// the module will set this to pre-render
+		// additionalRoutes: ["/other-page-prerendered"]
 	}
 })
 ```
-
-A full example, including usage with `@witchcraft/nuxt-logger` is available in the playground.
-
+</details>
 
 **NOTE: The proxies only work for api calls. They do not work for pages.**
 
@@ -256,7 +282,7 @@ This is useful for when registering deep links in the app as these require a des
 
 It will create a desktop file named `dev-YOURAPPNAME.desktop`, put it in `~/.local/share/applications/` and re-install it with `xdg-desktop-menu un/install`.
 
-The desktop's exec is set to run bash, cd into the project dir and run `npm run launch:electron`. 
+The desktop's exec is set to run bash, cd into the project dir and run `pnpm launch:electron`. 
 
 You can pass a second parameter to the script to use a different package.json script.
 
@@ -287,17 +313,31 @@ First for production only changes, we run the nuxt config with a different env v
 
 Then we use a custom protocol to proxy requests and api calls.
 
-##### Custom `file://` Handler 
+##### Custom `app://` Handler 
 
-Electron uses the `file://` protocol to load all scripts/assets/etc.
+Electron uses the `file://` protocol by default to load all scripts/assets/etc. 
 
-This does not work well with the default nuxt config so we use use a custom protocol handler to intercept all `file://` requests and correctly route them so that we don't have to be changing nuxt's baseURL and buildAssetsDir.
+Loading from files does not work well with the default nuxt config so we use use a custom protocol handler to intercept these requests and correctly route them so that we don't have to be changing nuxt's baseURL and buildAssetsDir.
+
+It is recommended to use a custom protocol instead of `file://`, so the example uses `app://`.
+
+Additionally to have as close to regular browser behavior, the host is set to `bundle`.
+
+So `getPaths` returns `app://bundle/path/to/file` for `windowUrl` in production.
+
+This is because using a `standard` protocol schema, paths like `/path/to/file` are resolved relative to the host as they are in the browser.
+
+Internally the protocol handler does the following:
+
+- Checks the request is safe (does not try to escape the path given).
+- Reroutes proxy requests to the correct url.
+- Checks if the request exists as a file, if not, attempts to find the nested `index.html` file (e.g. `/some/path` will correctly load `/some/path/index.html`).
 
 ##### Electron Route
 In electron we want to point to a different route, `/{electronRoute}`, so we can trim other routes from the bundle. 
 
 To do this we prerender the `/{electronRoute}` route and point electron to `/{electronRoute}/index.html`. 
-	- This used to require changing baseURL and buildAssetsDir to "./" and "/" respectively, but with the new `file://` handler it now works perfectly.
+	- This used to require changing baseURL and buildAssetsDir to "./" and "/" respectively, but with the custom `app://` handler it should just work.
 
 We then need to remove unwanted routes from the bundle which are included regardless of whether they're used. So for the web app, remove electron routes, and for the electron app, remove web app routes. This is done through a nuxt hook in the nuxt config on production builds only.
 
@@ -313,7 +353,7 @@ A redirect from a page (e.i. `if (process.client && isElectron) { await navigate
 
 Building for electron requires lots of changes to the config. We can't just build for web then copy. So this module reroutes the output when building the web app (and reroutes it differently when building for electron (see directory sturcture above).
 
-The use out the nested .output is because nuxt preview will add this automatically even if we set a custom cwd. This was we can do `nuxt preview .dist/platform` though it might often not be of much help.
+The reason for the nested `.output` is so it doesn't overwrite the default one. We can also do `nuxt preview .dist/platform` though it's often not of much help.
 
 To build for electron you must set `process.env.BUILD_ELECTRON` to true, to do the configuration required to make the final output actually work with electron.
 

@@ -1,7 +1,8 @@
 export * from "./types"
 // note adding file endings breaks build types
 export { getPaths } from "./getPaths"
-export { createNuxtFileProtocolHandler } from "./createNuxtFileProtocolHandler"
+export { createProxiedProtocolHandler } from "./createProxiedProtocolHandler"
+export { createPrivilegedProtocolScheme } from "./createPrivilegedProtocolScheme"
 export { createWindowControlsApi } from "./createWindowControlsApi"
 export { createWindowControlsApiHandler } from "./createWindowControlsApiHandler"
 export { useNuxtRuntimeConfig } from "./useNuxtRuntimeConfig"

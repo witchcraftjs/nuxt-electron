@@ -1,15 +1,29 @@
 import {
-	createNuxtFileProtocolHandler,
+	createPrivilegedProtocolScheme,
+	createProxiedProtocolHandler,
 	getPaths,
 	registerDevtoolsShortcuts,
 	STATIC,
 	useDevDataDir
 } from "@witchcraft/nuxt-electron/electron"
-import { app, BrowserWindow, ipcMain, Menu } from "electron"
+import {
+	app,
+	BrowserWindow,
+	ipcMain,
+	Menu,
+	protocol,
+	session
+} from "electron"
 
 app.enableSandbox()
 
-const paths = getPaths()
+const protocolName = "app"
+const paths = getPaths(protocolName, {
+	// these allow the user to override the paths in production
+	// remove them if you don't want to allow it
+	windowUrl: process.env.OVERRIDE_WINDOW_URL,
+	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL
+})
 
 const windows: BrowserWindow[] = []
 
@@ -27,7 +41,7 @@ const userDataDir = useDevDataDir() ?? app.getPath("userData")
 
 const logger = useElectronLogger(
 	{
-		...STATIC.ELECTRON_RUNTIME_CONFIG.logger,
+		...STATIC.ELECTRON_RUNTIME_CONFIG.logger as any,
 		logPath: path.join(userDataDir, "log.txt")
 	},
 	() => windows
@@ -40,13 +54,13 @@ logger.info({
 })
 
 /** End @witchcraft/nuxt-logger usage */
-if (!process.env.PUBLIC_SERVER_URL && !process.env.VITE_DEV_URL && !process.env.PUBLIC_SERVER_URL) {
-	logger.warn({ ns: "main:no-server-proxies", msg: "No VITE_DEV_URL or PUBLIC_SERVER_URL set. This is required for the /api routes to work in production." })
-}
 
-logger.warn({ ns: "main:serverUrl", msg: paths.publicServerUrl })
+protocol.registerSchemesAsPrivileged([
+	createPrivilegedProtocolScheme("app")
+])
+
 const proxies = {
-	"/api": paths.publicServerUrl,
+	"/api": paths.publicServerUrl
 }
 logger.debug({ ns: "main:proxies", msg: proxies })
 
@@ -60,14 +74,29 @@ ipcMain.on("test", () => {
 })
 
 void app.whenReady().then(async () => {
+	const partition = "persist:example"
+
+	const ses = session.fromPartition(partition)
+
+	// if you aren't using partitions, you can just pass `protocol` from electron
+	createProxiedProtocolHandler(
+		ses.protocol,
+		protocolName,
+		paths.nuxtPublicDir,
+		proxies,
+		{ logger }
+	)
+
 	const win = new BrowserWindow({
 		title: app.getName(),
-		webPreferences: defaultWebPreferences
+		webPreferences: {
+			...defaultWebPreferences,
+			partition
+		}
 	})
 
 	windows.push(win)
-	// for every window
-	createNuxtFileProtocolHandler(win.webContents.session, paths.nuxtPublicDir, proxies)
+
 	registerDevtoolsShortcuts(win)
 
 	if (import.meta.dev) {
@@ -75,7 +104,7 @@ void app.whenReady().then(async () => {
 	}
 	win.webContents.on("did-finish-load", () => {
 		setTimeout(() => {
-			logger.info({ ns: "main:didfinishload", msg: "Hello to window." })
+			logger.info({ ns: "main:did-finish-load", msg: "Hello to window." })
 		}, 1000) // not sure why this is needed, but it is
 	})
 	win.on("closed", () => windows.splice(windows.indexOf(win), 1))

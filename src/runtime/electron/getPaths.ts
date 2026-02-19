@@ -7,24 +7,23 @@ import { STATIC } from "./static.js"
 /**
  * Calculates the correct paths for the app to run in electron.
  *
- * Note: For serverUrl to not be overridable in production, you should set `electron.additionalElectronVariables.publicServerUrl` to a quoted string.
  *
- * ```ts[nuxt.config.ts]
- * export default defineNuxtConfig({
- * 	modules: [
- * 		"@witchcraft/nuxt-electron",
- * 	],
- * 	electron: {
- * 		additionalElectronVariables: {
- * 			publicServerUrl: process.env.NODE_ENV === "production"
- * 			? `"mysite.com"`
- * 			: `undefined`
- * 		}
- * 	}
+ * Paths are not overridable in production unless you pass the variables that can override them.
+ *
+ * ```ts
+ * const paths = getPaths("app", {
+ * 	windowUrl: process.env.OVERRIDE_WINDOW_URL,
+ * 	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL
  * })
  * ```
  */
-export function getPaths(): {
+export function getPaths(
+	protocolName: string = "app",
+	overridingEnvs: Record<string, string | undefined> = {
+		windowUrl: undefined,
+		publicServerUrl: undefined
+	}
+): {
 	windowUrl: string
 	publicServerUrl: string
 	nuxtPublicDir: string
@@ -41,8 +40,8 @@ export function getPaths(): {
 	const base = {
 		nuxtPublicDir,
 		preloadPath,
-		publicServerUrl: (process.env.PUBLIC_SERVER_URL
-			// allows us to override it when previewing (VITE_DEV_URL is not available then)
+		publicServerUrl: (
+			overridingEnvs.publicServerUrl
 			?? process.env.PUBLIC_SERVER_URL
 			?? process.env.VITE_DEV_SERVER_URL)!
 	}
@@ -50,7 +49,14 @@ export function getPaths(): {
 		throw new Error("publicServerUrl could not be determined.")
 	}
 
-	if (process.env.VITE_DEV_SERVER_URL) {
+	if (overridingEnvs.windowUrl) {
+		return {
+			...base,
+			windowUrl: `${overridingEnvs.windowUrl}${STATIC.ELECTRON_ROUTE}`
+		}
+	}
+
+	if (process.env.NODE_ENV === "production" && process.env.VITE_DEV_SERVER_URL) {
 		return {
 			...base,
 			windowUrl: `${process.env.VITE_DEV_SERVER_URL}${STATIC.ELECTRON_ROUTE}`
@@ -60,7 +66,7 @@ export function getPaths(): {
 		return {
 			...base,
 			// careful, do not use path.join, it will remove extra slashes
-			windowUrl: `file://${STATIC.ELECTRON_PROD_URL}`
+			windowUrl: `${protocolName}://bundle/${STATIC.ELECTRON_PROD_URL}`
 		}
 	}
 	unreachable()
