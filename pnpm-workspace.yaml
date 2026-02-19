@@ -14,13 +14,14 @@ catalog:
   '@nuxt/module-builder': ^1.0.2
   '@nuxt/schema': ^4.3.1
   '@nuxt/test-utils': ^3.23.0
-  '@witchcraft/nuxt-logger': ^0.0.9
+  '@witchcraft/nuxt-logger': ^0.0.10
   '@witchcraft/nuxt-utils': ^0.3.6
   '@witchcraft/ui': ^0.3.24
   changelogen: ^0.6.2
-  concurrently: ^9.0.0
+  concurrently: ^9.2.1
   defu: ^6.1.4
-  electron-builder: ^25.0.5
+  electron: ^37.10.3
+  electron-builder: ^26.8.1
   es-toolkit: ^1.44.0
   eslint: ^9.39.2
   husky: ^9.1.7

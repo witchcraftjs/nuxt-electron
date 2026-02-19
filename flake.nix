@@ -54,7 +54,7 @@
                   ({ pkgs, config, ... }: {
                     custom.js.nodejs.package = pkgs.nodejs_24;
                     custom.electron.enabled = true;
-                    custom.electron.package = pkgs.electron_38-bin;
+                    custom.electron.package = pkgs.electron_37-bin;
                   })
                 ];
             };

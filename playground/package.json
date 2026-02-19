@@ -3,6 +3,8 @@
 	"name": "@witchcraft/nuxt-electron-playground",
 	"type": "module",
 	"main": ".dist/electron/build/main.mjs",
+	"description": "Playground for @witchcraft/nuxt-electron",
+	"author": "Author",
 	"scripts": {
 		"dev": "nuxi dev",
 		"build": "nuxi build",
@@ -27,13 +29,12 @@
 		"@witchcraft/nuxt-electron": "workspace:*",
 		"@witchcraft/nuxt-logger": "catalog:",
 		"@witchcraft/ui": "catalog:",
-		"electron": "^38.0.0",
 		"nuxt": "catalog:",
 		"thread-stream": "catalog:"
 	},
 	"devDependencies": {
+		"electron": "catalog:",
 		"concurrently": "catalog:",
-		"electron": "^38.0.0",
 		"electron-builder": "catalog:"
 	}
 }

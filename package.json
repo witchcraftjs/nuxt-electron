@@ -67,7 +67,6 @@
 		"@nuxt/test-utils": "catalog:",
 		"@types/node": "latest",
 		"changelogen": "catalog:",
-		"electron": "^38.0.0",
 		"eslint": "catalog:",
 		"husky": "catalog:",
 		"json5": "catalog:",
