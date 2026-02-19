@@ -41,6 +41,7 @@
 		"@witchcraft/nuxt-utils": "catalog:",
 		"@witchcraft/ui": "catalog:",
 		"defu": "catalog:",
+		"electron": "catalog:",
 		"es-toolkit": "catalog:",
 		"vite-plugin-electron": "catalog:",
 		"vite-plugin-externalize-deps": "catalog:"

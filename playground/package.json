@@ -14,7 +14,7 @@
 		"build:electron": "BUILD_ELECTRON=true pnpm build",
 		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder",
 		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js App",
-		"preview:electron": "concurrrently --kill-others \" pnpm preview\" \"PUBLIC_SERVER_URL=http://localhost:3000 electron .\""
+		"preview:electron": "concurrently --kill-others \" pnpm preview\" \"PUBLIC_SERVER_URL=http://localhost:3000 electron .\""
 	},
 	"@comments": {
 		"scripts": {
@@ -30,6 +30,8 @@
 		"@witchcraft/nuxt-logger": "catalog:",
 		"@witchcraft/ui": "catalog:",
 		"nuxt": "catalog:",
+		"pino": "catalog:",
+		"pino-pretty": "catalog:",
 		"thread-stream": "catalog:"
 	},
 	"devDependencies": {
