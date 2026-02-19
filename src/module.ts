@@ -9,7 +9,7 @@ import {
 	extendRouteRules,
 	useLogger
 } from "@nuxt/kit"
-import { createConstantCaseVariables, nuxtFileBasedRouting, nuxtRemoveUneededPages, nuxtRerouteOutputTo } from "@witchcraft/nuxt-utils/utils"
+import { createConstantCaseVariables, nuxtRemoveUneededPages, nuxtRerouteOutputTo } from "@witchcraft/nuxt-utils/utils"
 import { defu } from "defu"
 import fs from "node:fs/promises"
 import path from "node:path"
@@ -20,7 +20,6 @@ import { build, type ElectronOptions, startup } from "vite-plugin-electron"
 import { notBundle } from "vite-plugin-electron/plugin"
 import { externalizeDeps } from "vite-plugin-externalize-deps"
 
-import pkg from "../package.json" with { type: "json" }
 
 // https://github.com/electron-vite/vite-plugin-electron/issues/251#issuecomment-2360153184
 startup.exit = async () => {
@@ -295,6 +294,7 @@ export default defineNuxtModule<ModuleOptions>({
 		let started = false
 
 		nuxt.hook("vite:extendConfig", config => {
+			// @ts-expect-error it's both readonly and possible undefined???
 			config.define ??= {}
 			config.define["import.meta.electron"] = "false"
 			config.define["process.electron"] = "false"
@@ -313,11 +313,11 @@ export default defineNuxtModule<ModuleOptions>({
 			)
 			const additionalElectronVariables = defu(
 				options.additionalElectronVariables,
-				nuxt.options.electron.additionalElectronVariables
+				(nuxt.options.electron === false ? {} : nuxt.options.electron.additionalElectronVariables)
 			)
 			const additionalViteDefinesToCopy = [
 				...options.additionalViteDefinesToCopy,
-				...(nuxt.options.electron.additionalViteDefinesToCopy ?? [])
+				...(nuxt.options.electron === false ? [] : (nuxt.options.electron.additionalViteDefinesToCopy ?? []))
 			]
 
 			const copyFromVite = [

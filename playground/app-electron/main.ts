@@ -3,7 +3,7 @@ import {
 	getPaths,
 	registerDevtoolsShortcuts,
 	STATIC,
-	useDevDataDir,
+	useDevDataDir
 } from "@witchcraft/nuxt-electron/electron"
 import { app, BrowserWindow, ipcMain, Menu } from "electron"
 
@@ -20,7 +20,7 @@ if (!import.meta.dev) {
 
 /** Optional @witchcraft/nuxt-logger usage */
 import { useElectronLogger } from "@witchcraft/nuxt-logger/electron"
-import path from "path"
+import path from "node:path"
 
 
 const userDataDir = useDevDataDir() ?? app.getPath("userData")
@@ -28,7 +28,7 @@ const userDataDir = useDevDataDir() ?? app.getPath("userData")
 const logger = useElectronLogger(
 	{
 		...STATIC.ELECTRON_RUNTIME_CONFIG.logger,
-		logPath: path.join(userDataDir, "log.txt"),
+		logPath: path.join(userDataDir, "log.txt")
 	},
 	() => windows
 )
@@ -49,7 +49,7 @@ logger.debug({ ns: "main:proxies", msg: proxies })
 const defaultWebPreferences: Electron.WebPreferences = {
 	contextIsolation: true,
 	nodeIntegration: false,
-	preload: paths.preloadPath,
+	preload: paths.preloadPath
 }
 ipcMain.on("test", () => {
 	logger.info({ ns: "main:test", msg: "Hello from main." })
@@ -57,7 +57,7 @@ ipcMain.on("test", () => {
 void app.whenReady().then(async () => {
 	const win = new BrowserWindow({
 		title: app.getName(),
-		webPreferences: defaultWebPreferences,
+		webPreferences: defaultWebPreferences
 	})
 
 	windows.push(win)

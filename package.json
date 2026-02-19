@@ -30,7 +30,8 @@
 		"build:only": "nuxt-module-build build",
 		"dev": "nuxi dev playground",
 		"dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-		"lint": "eslint \"{src,test,playground/app}/**/*.{ts,vue}\" \"*.{js,cjs,mjs,ts}\"",
+		"lint": "pnpm lint:eslint && pnpm lint:types",
+		"lint:eslint": "eslint \"{src,test,playground/app}/**/*.{ts,vue}\" \"*.{js,cjs,mjs,ts}\"",
 		"lint:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
 		"test": "vitest run",
 		"test:watch": "vitest watch"
