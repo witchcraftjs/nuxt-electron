@@ -9,6 +9,13 @@ export default defineNuxtConfig({
 		compatibilityVersion: 4 as const
 	},
 	compatibilityDate: "2024-09-23",
+	nitro: {
+		output: {
+			dir: ".dist/web/.output",
+			serverDir: ".dist/web/.output/server",
+			publicDir: ".dist/web/.output/public"
+		}
+	},
 	vite: {
 		build: {
 			// for debugging

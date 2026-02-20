@@ -551,8 +551,16 @@ export default defineNuxtModule<ModuleOptions>({
 			} else {
 				logger.info(`Skipping Electron Build`)
 			}
-
-			nuxtRerouteOutputTo(nuxt, nonElectronNuxtBuildDir)
+			const nuxtOutputDir = nuxt.options.nitro?.output?.dir
+			if (nuxtOutputDir === undefined || nuxtOutputDir === ".output") {
+				logger.warn(crop`Nitro output dir is not set or set to the default, it's suggested you set it to the following when using nuxt-electron:
+					nitro: {
+						output: ".dist/web/.output",
+						serverDir: ".dist/web/.output/server"
+						publicDir: ".dist/web/.output/public"
+					}
+				.`)
+			}
 		}
 
 		addImportsDir(resolve("runtime/utils"))

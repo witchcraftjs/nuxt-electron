@@ -53,15 +53,30 @@ All you need to do is add the electron module to your tailwind css as a source:
 
 A directory structure like the following is suggested:
 ```
-.dist/ (I prefer .dist over dist so it stays hidden and at the top)
-	├─ [platform]
-   ├─ .output (nuxt output)
-   ├─ release
-      ├─ ${productName}_${version}.${ext}
-   ├─ build (for any intermediate builds like electron's)
-app/ - nuxt code
-app-electron/ - contains all the main/renderer code
+[project root]
+├── .dist/ (I prefer .dist over dist so it stays hidden and at the top)/
+│   └── [platform]/
+│       ├── .output/ (nuxt output)
+│       ├── release/
+│       │   └── ${productName}_${version}.${ext}
+│       └── build/ (for any intermediate builds like electron's)
+├── app/ - nuxt code
+└── app-electron/ - contains all the main/renderer code
 ```
+The module sets it up like this when building electron, but not for the regular build. You should set that to go elsewhere if you're using it (though it's not required).
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+	nitro: {
+		output: {
+			dir: ".dist/web/.output",
+			serverDir: ".dist/web/.output/server",
+			publicDir: ".dist/web/.output/public"
+		}
+	}
+})
+```
+
 Usage of nuxt 4's new directory structure is recommended.
 
 For whatever electron builder you want to use, you must point it at the correct directories.
