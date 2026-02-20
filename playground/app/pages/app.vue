@@ -1,17 +1,4 @@
 <template>
-Electron Only
-<div>
-	Server Api Call:
-	<div>
-		{{ data ?? error ?? status }}
-	</div>
-</div>
+<NuxtPage/>
 </template>
-
-<script lang="ts" setup>
-/** Optional @witchcraft/nuxt-logger usage */
-setupElectronMainToRendererLogging()
-const logger = useLogger()
-logger.debug({ ns: "renderer:hello" })
-const { data, error, status } = useAsyncData("test", () => $fetch("/api/test"), { server: false, getCachedData: () => undefined })
-</script>
+<!-- careful, if the correct nested structure isn't used, nuxt will fail to prerender -->
