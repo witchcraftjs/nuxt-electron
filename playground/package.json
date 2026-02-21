@@ -5,6 +5,7 @@
 	"main": ".dist/electron/build/main.mjs",
 	"description": "Playground for @witchcraft/nuxt-electron",
 	"author": "Author",
+	"repository": "https://github.com/witchcraftjs/nuxt-electron",
 	"version": "0.0.0",
 	"scripts": {
 		"dev": "nuxi dev",
@@ -15,14 +16,14 @@
 		"launch:electron": "electron .",
 		"launch:electron:dev": "LOG_LEVEL=trace OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 electron .",
 		"build:electron": "BUILD_ELECTRON=true pnpm build",
-		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder",
+		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder --publish=never",
 		"build:electron:no-pack": "APP_VERSION=0.0.0 SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
 		"preview:electron:dev": "concurrently --kill-others \"pnpm preview\" \"sleep 2 && pnpm launch:electron:dev\"",
 		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js YOURAPPNAME"
 	},
 	"@comments": {
 		"scripts": {
-			"build:electron:pack": "APP_VERSION is because electron-builder requires some app version, see electron-builder.json5",
+			"build:electron:pack": "APP_VERSION is because electron-builder requires some app version, see electron-builder.js. --publish=never is because this is not a real package, can be removed in the future after electron-builder@27 comes out with this as the default.",
 			"LOG_LEVEL=trace": "This is for @witchcraft/nuxt-logger so you can see the requests more clearly when running the playground.",
 			"sleep" : "The sleep in the preview:electron:dev script is to give the server time to start and immediately reply to the api request."
 		},
