@@ -1,6 +1,7 @@
 packages:
   - ./
   - playground/
+  - playground/app-electron/
 
 allowUnusedPatches: true
 

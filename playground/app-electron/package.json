@@ -1,0 +1,18 @@
+{
+	"":[
+		"This file is for electron-builder. It serves as the second package.json (for the two package.json build strategy) so we don't include more dependencies than needed.",
+		"Other properties are filled in the build config using the main package.json.",
+		"It is only for building. It is not installed but not actually used.",
+		"It's needed because there's no way to override 'dependencies` in the package.json read by electron-builder.",
+		"name property is needed here even if we override it"
+	],
+	"name": "ignore",
+	"dependencies": {
+		"@witchcraft/nuxt-electron": "workspace:*",
+		"@witchcraft/nuxt-logger": "catalog:",
+		"nuxt": "catalog:",
+		"pino": "catalog:",
+		"pino-pretty": "catalog:",
+		"thread-stream": "catalog:"
+	}
+}

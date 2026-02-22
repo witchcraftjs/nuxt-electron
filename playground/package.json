@@ -1,12 +1,13 @@
 {
 	"private": true,
-	"name": "@witchcraft/nuxt-electron-playground",
+	"name": "your-app-name",
 	"type": "module",
 	"main": ".dist/electron/build/main.mjs",
 	"description": "Playground for @witchcraft/nuxt-electron",
 	"author": "Author",
 	"repository": "https://github.com/witchcraftjs/nuxt-electron",
 	"version": "0.0.0",
+	"packageManager": "pnpm@10.28.0",
 	"scripts": {
 		"dev": "nuxi dev",
 		"build": "nuxi build",
@@ -16,7 +17,7 @@
 		"launch:electron": "electron .",
 		"launch:electron:dev": "LOG_LEVEL=trace OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 electron .",
 		"build:electron": "BUILD_ELECTRON=true pnpm build",
-		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder --publish=never",
+		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder --publish=never --config electron-builder-config.js",
 		"build:electron:no-pack": "APP_VERSION=0.0.0 SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
 		"preview:electron:dev": "concurrently --kill-others \"pnpm preview\" \"sleep 2 && pnpm launch:electron:dev\"",
 		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js YOURAPPNAME"

@@ -87,7 +87,10 @@ A directory structure like the following is suggested:
 │       │   └── ${productName}_${version}.${ext}
 │       └── build/ (for any intermediate builds like electron's)
 ├── app/ - nuxt code
-└── app-electron/ - contains all the main/renderer code
+├── app-electron/ - contains all the main/renderer code
+│   └── package.json - to control packaged dependencies
+└── electron-builder-config.js
+
 ```
 The module sets it up like this when building electron, but not for the regular build. You should set that to go elsewhere if you're using it (though it's not required).
 
@@ -107,36 +110,12 @@ Usage of nuxt 4's new directory structure is recommended.
 
 For whatever electron builder you want to use, you must point it at the correct directories.
 
-For `electron-builder` with the default directories the module uses and to have all the artifacts in one folder, add:
+For `electron-builder` with the default directories the module uses and to be able to control which dependencies are packaged with `app-electron/package.json` copy the following:
 
+[electron-builder-config.js](https://github.com/witchcraftjs/nuxt-electron/blob/master/playground/electron-builder-config.js)
+[app-electron/package.json](https://github.com/witchcraftjs/nuxt-electron/blob/master/playground/app-electron/package.json)
 
-<details>
-<summary>Electron Builder Config Example</summary>
-
-```json
-{
-	"directories": {
-		"output": ".dist/electron/release"
-	},
-	"files": [
-		".dist/electron/build/**/*",
-		".dist/electron/.output/public/**/*"
-	],
-	"linux": {
-		"artifactName": "${productName}_${version}.${ext}",
-		// ...
-	},
-	"mac": {
-		"artifactName": "${productName}_${version}.${ext}",
-		// ...
-	},
-	"win": {
-		"artifactName": "${productName}_${version}.${ext}"
-		// ...
-	},
-}
-```
-</details>
+They should work out of the box, with the package name as configured in your package.json. 
 
 Add the following to the package.json:
 
@@ -146,6 +125,12 @@ Add the following to the package.json:
 ```json
 // package.json
 {
+	// these first properties are required to package the app
+	"name": "your-app-name",
+	"version": "0.0.0",
+	"description": "Your app description",
+	"author": "Your Name",
+	"repository" :"...",
 	"main": ".dist/electron/build/main.cjs",
 	"scripts": {
 		"dev": "nuxi dev",
@@ -396,7 +381,6 @@ Note that nuxt builds the server anyways, it's just not packed into the final ap
 Your packer should then create the final executables (into `.dist/electron/release`).
 
 ### Debugging Tips
-
 
 -  To inspect the asar, run `npx @electron/asar list .dist/electron/release/linux-unpacked/resources/app.asar`.
 
