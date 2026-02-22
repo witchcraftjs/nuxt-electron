@@ -33,7 +33,11 @@ const logger = useElectronLogger(
 	() => windows
 )
 
-logger.info({ ns: "main:start", msg: "Hello from electron main." })
+logger.info({
+	ns: "main:start",
+	paths,
+	userDataDir
+})
 
 /** End @witchcraft/nuxt-logger usage */
 if (!process.env.PUBLIC_SERVER_URL && !process.env.VITE_DEV_URL && !process.env.PUBLIC_SERVER_URL) {
@@ -54,6 +58,7 @@ const defaultWebPreferences: Electron.WebPreferences = {
 ipcMain.on("test", () => {
 	logger.info({ ns: "main:test", msg: "Hello from main." })
 })
+
 void app.whenReady().then(async () => {
 	const win = new BrowserWindow({
 		title: app.getName(),

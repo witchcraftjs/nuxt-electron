@@ -1,12 +1,8 @@
 import { unreachable } from "@alanscodelog/utils/unreachable"
-import { app } from "electron"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 import { STATIC } from "./static.js"
-
-export function forceRelativePath(filepath: string): string {
-	return path.join(`.${path.sep}`, filepath)
-}
 
 /**
  * Calculates the correct paths for the app to run in electron.
@@ -34,10 +30,13 @@ export function getPaths(): {
 	nuxtPublicDir: string
 	preloadPath: string
 } {
-	const rootDir = app.getAppPath()
-	const nuxtPublicDir = path.resolve(rootDir, forceRelativePath(STATIC.ELECTRON_NUXT_PUBLIC_DIR!))
+	// this will be the same in dev and prod and makes things simpler
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-	const preloadPath = path.resolve(rootDir, forceRelativePath(STATIC.ELECTRON_BUILD_DIR!), "./preload.cjs")
+	const nuxtPublicDir = path.join(__dirname, STATIC.ELECTRON_NUXT_PUBLIC_DIR!)
+
+	const preloadPath = path.join(__dirname, STATIC.ELECTRON_BUILD_DIR!, "./preload.cjs")
 
 	const base = {
 		nuxtPublicDir,
@@ -57,7 +56,7 @@ export function getPaths(): {
 			windowUrl: `${process.env.VITE_DEV_SERVER_URL}${STATIC.ELECTRON_ROUTE}`
 		}
 		// this will always be defined in production since they are defined by vite
-	} else if (STATIC.ELECTRON_PROD_URL && STATIC.ELECTRON_BUILD_DIR) {
+	} else if (STATIC.ELECTRON_PROD_URL !== undefined && STATIC.ELECTRON_BUILD_DIR !== undefined) {
 		return {
 			...base,
 			// careful, do not use path.join, it will remove extra slashes

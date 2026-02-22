@@ -205,13 +205,14 @@ export default defineNuxtModule<ModuleOptions>({
 		const srcDir = await resolvePath(options.srcDir, nuxt.options.alias)
 		const nonElectronNuxtBuildDir = await resolvePath(options.nonElectronNuxtBuildDir, nuxt.options.alias)
 
+		// at this point they are made relative to the nuxt dir
+		// for passing to electron we make them relative to main
 		const electronRootBuildDir = await resolvePath(options.electronBuildDir, nuxt.options.alias)
 		const relativeElectronDir = path.relative(nuxt.options.rootDir, electronRootBuildDir)
 		// must be relative
 		const electronNuxtDir = path.join(relativeElectronDir, ".output")
 		// must be relative
 		const electronBuildDir = path.join(relativeElectronDir, "build")
-		// relative to nuxt dir
 		const electronProdUrl = `${options.electronRoute}/index.html`
 		const electronRoute = options.electronRoute
 
@@ -340,9 +341,10 @@ export default defineNuxtModule<ModuleOptions>({
 					// on windows the backslashes in the paths must be double escaped
 					electronRoute: electronRoute.replaceAll("\\", "\\\\"),
 					electronProdUrl: electronProdUrl.replaceAll("\\", "\\\\"),
-					electronNuxtDir: electronNuxtDir.replaceAll("\\", "\\\\"),
-					electronNuxtPublicDir: electronNuxtPublicDir.replaceAll("\\", "\\\\"),
-					electronBuildDir: electronBuildDir.replaceAll("\\", "\\\\"),
+					// all paths muxt be made relative to the build dir where electron will launch from in production
+					electronNuxtDir: path.relative(electronBuildDir, relativeElectronDir).replaceAll("\\", "\\\\"),
+					electronNuxtPublicDir: path.relative(electronBuildDir, electronNuxtPublicDir).replaceAll("\\", "\\\\"),
+					electronBuildDir: path.relative(electronBuildDir, electronBuildDir).replaceAll("\\", "\\\\"),
 					// ...options.additionalElectronVariables,
 					// nuxt's runtimeConfig cannot be used in electron's main since it's built seperately
 					// also we must stringify ourselves since escaped double quotes are not preserved in the final output :/
