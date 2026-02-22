@@ -56,17 +56,7 @@
                         nix develop .#packages.${system}.default --ignore-environment
                       '';
                       description = ''
-                        Debug the nix build.
-
-                        Once in the shell run:
-                        genericBuild
-
-                        or run each phase individually:
-
-                        unpackPhase
-                        configurePhase
-                        eval "$buildPhase"
-                        installPhase
+                        Debug the nix build. Once in the shell run: genericBuild or run each phase individually: [unpackPhase configurePhase eval "$buildPhase" installPhase]
                       '';
                     };
                   })
