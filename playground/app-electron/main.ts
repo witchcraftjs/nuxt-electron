@@ -91,7 +91,7 @@ void app.whenReady().then(async () => {
 		title: app.getName(),
 		webPreferences: {
 			...defaultWebPreferences,
-			partition
+			session: ses
 		}
 	})
 
