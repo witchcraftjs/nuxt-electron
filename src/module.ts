@@ -230,7 +230,7 @@ export default defineNuxtModule<ModuleOptions>({
 		}
 
 		const isElectronBuild = process.env.BUILD_ELECTRON === "true" && hasScripts
-		const skipElectronPack = process.env.SKIP_ELECTRON_PACK === "true"
+		const skipElectronPack = !isElectronBuild || process.env.SKIP_ELECTRON_PACK === "true"
 
 		const autoOpen = !!(options.autoOpen && hasScripts && isDev)
 		const useWatch = nuxt.options.dev
