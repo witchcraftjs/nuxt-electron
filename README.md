@@ -47,11 +47,15 @@ pnpm build
 pnpm build:electron:pack
 # in one tab
 pnpm preview
-# in another tab
+# in another tab - replace `linux-unpacked` with your platform
 OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 ./.dist/electron/release/linux-unpacked/your-app-name
 ```
 
-If you're using nix the above should work in the dev shell. You can also do `nix run` but warning, this is like just building and doing `pnpm launch:electron` (see below).
+#### Nix
+
+If you're using nix the first example should work in the dev shell. The second won't. You can do `nix run`, but warning, this is like building and doing `pnpm launch:electron` so it api will be pointed at production server (see below).
+
+See [#Usage on Nix](#Usage-on-Nix) for more details.
 
 ## Install
 ```bash
@@ -162,7 +166,7 @@ Add the following to the package.json:
 ```
 </details>
 
-#### To Develop
+### To Develop
 
 Run `pnpm dev:electron`. This will both launch nuxt and open electron.
 
@@ -172,12 +176,12 @@ Run `pnpm dev` to start the nuxt dev server. The dev version of the app will be 
 
 In a seperate terminal run `pnpm launch:electron` to start the electron app (this will do `electron .` which will run the configured `main` property, aka `.dist/electron/build/main.cjs`).
 
-##### Notes
+#### Notes
 By default the module will not open electron. You must set `process.env.AUTO_OPEN` to include the string `electron` or set `autoOpen `in the options to true, hence the seperate `dev:electron` script.
 
 The idea is if you use other platform modules as well, you'd do `AUTO_OPEN=electron,android`, etc. for each module you wanted to actually have auto open.
 
-#### To Build
+### To Build
 
 Build the regular nuxt app with `pnpm build` then build the electron app with `pnpm build:electron` or `pnpm build:electron:no-pack` (if you just want to test, you can skip the packing).
 
@@ -191,7 +195,7 @@ You can run `pnpm launch:electron` to launch the production build in nearly exac
 
 CAREFUL though, **this will proxy api requests to the real server**.
 
-If you want to test against the local server build, run it with `pnpm preview` then run the app with `pnpm launch:electron:dev`.
+ef you want to test against the local server build, run it with `pnpm preview` then run the app with `pnpm launch:electron:dev`.
 
 If you use the example code, it allows `OVERRIDE_PUBLIC_SERVER_URL` which allows the app to override which server the app proxies to and that's what the script is setting to allow this.
 
@@ -207,7 +211,6 @@ We also need to create the nuxt `app://` protocol handler for every window and c
 
 
 See full example in [main.ts](https://github.com/witchcraftjs/nuxt-electron/blob/master/playground/app-electron/main.ts).
-
 
 For the nuxt config, here's the minimum you need, the one in the playground contains additional options for testing and debugging:
 
@@ -292,18 +295,35 @@ And a third parameter pointing to your config if it's not in one of the searched
 - `electron-builder.json5`
 - `electron-builder.json`
 
+### Usage on Nix
+
+As mentioned, the second example script won't work out of the box with nix. You need something like [nix-alien](https://github.com/thiagokokada/nix-alien) if you want to test the electron-builder packaged version (which you should).
+
+Apart from that nix has some additional goodies.
+
+First there flake with a devenv based shell and direnv support. If you have direnv run `direnv allow .` in the project root. Otherwise run `nix develop`.
+
+Nearly everything should work, except the build electron-builder builds. You can do `nix run` instead.
+
+The derivation for reference is [here](https://github.com/witchcraftjs/nuxt-electron/blob/master/playground/nix/derivation.nix).
+
+There is also a debugging script `debugNixBuild` which drops you in a shell to run the derivation. See it for details. The shell should give you info about all scripts.
+
+It uses a set of devenv flake utils I've created (see [here](https://github.com/alanscodelog/nix-devenv-utils)). They contain some good stuff like working support for electron (obviously), android, playwright, etc if you're interested.
+
 ## Misc Notes
 
-Note that while nuxt's path aliases are passed to the electron vite config, you cannot use other nuxt paths (such as those added by modules, e.g. `#somemodule`) in electron. This is why a seperate `@witchcraft/nuxt-electron/electron` export is provided.
+- Note that while nuxt's path aliases are passed to the electron vite config, you cannot use other nuxt paths (such as those added by modules, e.g. `#somemodule`) in electron. This is why a seperate `@witchcraft/nuxt-electron/electron` export is provided.
+- In any electron main code, import.meta.url is always the built main.mjs file regardless of whether you're in dev or prod or what file you're in.
 
 
 ## How it Works
 
-#### Development
+### Development
 
 Electron is pointed to the localhost server and sees a similar view to the web app except we must client side detect we're on electron and redirect to the `electronRoute`.
 
-#### Production
+### Production
 
 Normally nuxt has to be configured to output a SPA by setting `ssr: false` and you have to modify baseURL and buildAssetsDir for everything to work (among other changes, see nuxt-electron module for the typical changes).
 
@@ -313,7 +333,7 @@ First for production only changes, we run the nuxt config with a different env v
 
 Then we use a custom protocol to proxy requests and api calls.
 
-##### Custom `app://` Handler 
+#### Custom `app://` Handler 
 
 Electron uses the `file://` protocol by default to load all scripts/assets/etc. 
 
@@ -343,13 +363,13 @@ We then need to remove unwanted routes from the bundle which are included regard
 
 Note we would ideally also remove "/" from the prerender, but this requires manually splitting chunks by pages and I was having issues with this.
 
-###### Why not use a redirect? 
+##### Why not use a redirect? 
 
 A `routeRules` redirect won't work, because it will trigger a request to electron's file protocol handler which we don't know what to do with.
 
 A redirect from a page (e.i. `if (process.client && isElectron) { await navigateTo("/app") }`) works, but it takes a little big of time to navigate. This is still needed for development redirecting, but not in production.
 
-#### Build
+### Build
 
 Building for electron requires lots of changes to the config. We can't just build for web then copy. So this module reroutes the output when building the web app (and reroutes it differently when building for electron (see directory sturcture above).
 
@@ -357,7 +377,7 @@ The reason for the nested `.output` is so it doesn't overwrite the default one. 
 
 To build for electron you must set `process.env.BUILD_ELECTRON` to true, to do the configuration required to make the final output actually work with electron.
 
-##### Electron Build
+#### Electron Build
 
 The electron app itself is "built" in two parts, the "build" and the "packing".
 

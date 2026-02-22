@@ -9,24 +9,31 @@ export default {
 	productName: "your-app-name",
 	executableName: "your-app-name",
 	asar: true,
+	asarUnpack: [
+		// @witchcraft/nuxt-logger uses pino which causes issues if packed
+		"**/node_modules/thread-stream/lib/worker.js",
+		"**/node_modules/pino-worker/**"
+	],
 	directories: {
 		output: ".dist/electron/release"
 	},
 	files: [
+		"package.json",
 		".dist/electron/build/**/*",
 		".dist/electron/.output/public/**/*",
 		// for nix only
 		"!**/.direnv/*",
-		"!**/.devenv/*",
+		"!**/.devenv/*"
 
 		// if we let it, the builder will copy all dependencies listed in the main package.json
 		// which includes things for the client, the server, etc
 		// the server we can ignore, the client is packaged already by nuxt
 		// we only need the dependencies electron's main needs
 		// these are listed in the electron layer's package.json
-		"!node_modules",
-		"!node_modules/.pnpm",
-		...electronMainDependencies.map(dep => "!node_modules/" + dep + "/**/*")
+		// "!node_modules",
+		// "!node_modules/.pnpm",
+		// ...electronMainDependencies.map(dep => "node_modules/" + dep + "/**/*"),
+		// "!node_modules/**/{tests}/**"
 	],
 	linux: {
 		artifactName: "${productName}_${version}.${ext}",
