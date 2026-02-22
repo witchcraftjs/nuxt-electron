@@ -29,10 +29,6 @@
       forEachSystem = nixpkgs.lib.genAttrs (import systems);
     in
     {
-      packages = forEachSystem (system: {
-        devenv-up = self.devShells.${system}.default.config.procfileScript;
-        devenv-test = self.devShells.${system}.default.config.test;
-      });
 
       devShells = forEachSystem
         (system:
@@ -55,9 +51,40 @@
                     custom.js.nodejs.package = pkgs.nodejs_24;
                     custom.electron.enabled = true;
                     custom.electron.package = pkgs.electron_37-bin;
+                    scripts.debugNixBuild = {
+                      exec = ''
+                        nix develop .#packages.${system}.default --ignore-environment
+                      '';
+                      description = ''
+                        Debug the nix build.
+
+                        Once in the shell run:
+                        genericBuild
+
+                        or run each phase individually:
+
+                        unpackPhase
+                        configurePhase
+                        eval "$buildPhase"
+                        installPhase
+                      '';
+                    };
                   })
                 ];
             };
           });
+      packages = forEachSystem (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          devenv-up = self.devShells.${system}.default.config.procfileScript;
+          devenv-test = self.devShells.${system}.default.config.test;
+          default = pkgs.callPackage ./playground/nix/derivation.nix {
+            node_package = pkgs.nodejs_24;
+            pnpm_package = pkgs.pnpm;
+            electron_package = pkgs.electron_37-bin;
+          };
+        });
     };
 }
