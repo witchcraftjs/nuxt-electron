@@ -36,7 +36,7 @@ async function getPathToServe(
 		logger.trace({
 			ns: "main:createProxiedProtocolHandler:stats",
 			key,
-			stats,
+			exists: !!stats,
 			isFile: stats?.isFile(),
 			isDirectory: stats?.isDirectory()
 		})
