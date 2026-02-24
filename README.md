@@ -15,6 +15,7 @@
 - :scissors: Trims server and non-electron routes from the electron bundle.
 - :open_file_folder: Modifies directory structure for easier multi-platform builds.
 - :snowflake: Nix Support - Playground contains an example flake for reproducible development and builds.
+- :closed_lock_with_key: Supports Auth - Integrates with my auth library [@witchcraft/nuxt-auth](https://github.com/witchcraftjs/nuxt-auth) for local-first auth.
 - :hammer_and_wrench: Helpful Tools/Composables
 	- `isElectron` 
 	- Electron Only 
@@ -226,7 +227,8 @@ export default defineNuxtConfig({
 				? `"https://yoursite.com"`
 				: `undefined`
 		},
-		// the module will set this to pre-render
+		// the module will set this to prerender: true
+		// you can override it in routeRules and create a spa without prerender if you need
 		// additionalRoutes: ["/other-page-prerendered"]
 	}
 })
@@ -305,6 +307,16 @@ It uses a set of devenv flake utils I've created (see [here](https://github.com/
 - Note that while nuxt's path aliases are passed to the electron vite config, you cannot use other nuxt paths (such as those added by modules, e.g. `#somemodule`) in electron. This is why a seperate `@witchcraft/nuxt-electron/electron` export is provided.
 - In any electron main code, import.meta.url is always the built main.mjs file regardless of whether you're in dev or prod or what file you're in.
 
+## Auth
+
+While you might not want to use it (it is very beta) my auth library [@witchcraft/nuxt-auth](https://github.com/witchcraftjs/nuxt-auth) contains a whole section on auth flow on electron. It also contains electron specific code for doing local-first auth which you might find helpful (more code will be added as I figure more things out). It includes support for "semi-authed" local only users and handling "synced" users who can remain "logged in" past authentication expiration so long as they don't perform actions that require auth (e.g. sync). 
+
+I do not use an existing lib because I have not found any that support complex scenarios like these. 
+
+This takes a lot of careful consideration and planning to implement like this. I'm still working on some pain points. 
+
+I mention it because you will need to render your login page as a SPA to get it working. This makes middleware "soft" on that page, just so you're aware. You will also need to proxy auth requests.
+
 
 ## How it Works
 
@@ -314,7 +326,7 @@ Electron is pointed to the localhost server and sees a similar view to the web a
 
 ### Production
 
-Normally nuxt has to be configured to output a SPA by setting `ssr: false` and you have to modify baseURL and buildAssetsDir for everything to work (among other changes, see nuxt-electron module for the typical changes).
+Normally nuxt would have had to be configured to output a SPA by setting `ssr: false` and you have to modify baseURL and buildAssetsDir for everything to work (among other changes, see nuxt-electron module for the typical changes).
 
 But this module has gone a different route.
 
@@ -383,6 +395,10 @@ Your packer should then create the final executables (into `.dist/electron/relea
 ### Debugging Tips
 
 -  To inspect the asar, run `npx @electron/asar list .dist/electron/release/linux-unpacked/resources/app.asar`.
+- If routes aren't rendering:
+	- Check the final config in the ready hook. Other modules might be causing issues.
+	- Check your structure is correct (`pages/page.vue` with NuxtPage, `pages/page/index.vue`).
+
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/@witchcraft/nuxt-electron/latest.svg?style=flat&colorA=020420&colorB=00DC82
