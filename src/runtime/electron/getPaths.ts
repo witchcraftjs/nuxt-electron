@@ -66,7 +66,7 @@ export function getPaths(
 		return {
 			...base,
 			// careful, do not use path.join, it will remove extra slashes
-			windowUrl: `${protocolName}://bundle/${STATIC.ELECTRON_PROD_URL}`
+			windowUrl: `${protocolName}://bundle${STATIC.ELECTRON_PROD_URL}`
 		}
 	}
 	unreachable()
