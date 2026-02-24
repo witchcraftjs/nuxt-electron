@@ -5,6 +5,12 @@ export default defineNuxtConfig({
 		"../src/module.ts"
 	],
 	devtools: { enabled: true },
+	routeRules: {
+		"/spa": {
+			ssr: false
+			// can be prerender: false if you want, tested and it should work
+		}
+	},
 	future: {
 		compatibilityVersion: 4 as const
 	},
@@ -47,6 +53,6 @@ export default defineNuxtConfig({
 			}
 		},
 		// the module will set this to pre-render
-		additionalRoutes: ["/other-page-prerendered"]
+		additionalRoutes: ["/other-page-prerendered", "/spa"]
 	}
 })

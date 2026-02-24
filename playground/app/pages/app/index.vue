@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="display: flex; flex-direction: column; gap: 2rem;">
 	Electron Only
 	<div>
 		<div>
@@ -16,6 +16,11 @@
 		<NuxtLink to="/app/other-app-page">
 			Go to /app/other-app-page (should work)
 		</NuxtLink>
+
+		<NuxtLink to="/spa">
+			Go to /spa (should work)
+		</NuxtLink>
+
 		<NuxtLink to="/other-page-prerendered">
 			Go to pre-rendered, included, other-page-prerendered (should work)
 		</NuxtLink>
