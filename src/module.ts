@@ -528,7 +528,8 @@ export default defineNuxtModule<ModuleOptions>({
 			for (const route of options.additionalRoutes) {
 				extendRouteRules(route, {
 					prerender: true
-				}, { override: true })
+				// allow user to set something else and use a spa
+				}, { override: false })
 			}
 
 
