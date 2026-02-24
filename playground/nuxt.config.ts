@@ -1,3 +1,5 @@
+import { pretty } from "@alanscodelog/utils/pretty"
+
 export default defineNuxtConfig({
 	modules: [
 		"@witchcraft/ui",
@@ -33,6 +35,16 @@ export default defineNuxtConfig({
 		build: {
 			// for debugging
 			minify: false
+		}
+	},
+	hooks: {
+		"ready"(nuxt) {
+			/* eslint-disable no-console */
+			// debug issues with routes
+			console.log("FINAL ROUTE RULES:")
+			console.log(pretty((nuxt.options as any).routeRules))
+			console.log("NITRO ROUTE RULES:")
+			console.log(pretty((nuxt.options as any).nitro!.routeRules))
 		}
 	},
 	electron: {
