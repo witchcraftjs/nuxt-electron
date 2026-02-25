@@ -1,6 +1,6 @@
 {
 	"name": "@witchcraft/nuxt-electron",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Nuxt module for working with electron.",
 	"repository": "https://github.com/witchcraftjs/nuxt-electron",
 	"license": "MIT",
