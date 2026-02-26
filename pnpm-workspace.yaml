@@ -15,7 +15,7 @@ catalog:
   '@nuxt/module-builder': ^1.0.2
   '@nuxt/schema': ^4.3.1
   '@nuxt/test-utils': ^3.23.0
-  '@witchcraft/nuxt-logger': ^0.0.10
+  '@witchcraft/nuxt-logger': ^0.0.11
   '@witchcraft/nuxt-utils': ^0.3.6
   '@witchcraft/ui': ^0.3.24
   changelogen: ^0.6.2
