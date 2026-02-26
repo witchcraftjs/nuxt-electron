@@ -10,8 +10,8 @@
 ## Features
 
 - :zap: Auto reloads/restarts electron on changes to the main/renderer code or nuxt server restarts.
-- :rocket: Api calls are proxied to the server.
-- :start: Rendering strategy isn't changed. Does not require static builds or changing baseURL/buildAssetsDir. 
+- :rocket: Api calls are proxied to the server (you can also easily proxy other requests).
+- :star: Rendering strategy isn't changed. Does not require static builds or changing baseURL/buildAssetsDir. 
 - :scissors: Trims server and non-electron routes from the electron bundle.
 - :open_file_folder: Modifies directory structure for easier multi-platform builds.
 - :snowflake: Nix Support - Playground contains an example flake for reproducible development and builds.
