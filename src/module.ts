@@ -522,7 +522,7 @@ export default defineNuxtModule<ModuleOptions>({
 			nuxt.options.router.options.hashMode = false
 
 			// its not a smart merge or anything, so we need to override both possibilities
-			extendRouteRules(electronRoute + "/", {
+			extendRouteRules(electronRoute, {
 				prerender: true
 			}, { override: true })
 
