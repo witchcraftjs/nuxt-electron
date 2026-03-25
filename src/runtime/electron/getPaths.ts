@@ -56,7 +56,7 @@ export function getPaths(
 		}
 	}
 
-	if (process.env.NODE_ENV === "production" && process.env.VITE_DEV_SERVER_URL) {
+	if (process.env.NODE_ENV !== "production" && process.env.VITE_DEV_SERVER_URL) {
 		return {
 			...base,
 			windowUrl: `${process.env.VITE_DEV_SERVER_URL}${STATIC.ELECTRON_ROUTE}`
