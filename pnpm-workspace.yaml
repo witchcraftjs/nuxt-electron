@@ -8,8 +8,8 @@ allowUnusedPatches: true
 catalog:
   '@alanscodelog/eslint-config': ^6.3.1
   '@alanscodelog/semantic-release-config': ^6.0.2
-  '@alanscodelog/tsconfigs': ^6.2.0
-  '@alanscodelog/utils': ^6.0.2
+  '@alanscodelog/tsconfigs': ^6.3.0
+  '@alanscodelog/utils': ^6.2.0
   '@nuxt/eslint-config': ^1.15.1
   '@nuxt/kit': ^4.3.1
   '@nuxt/module-builder': ^1.0.2
