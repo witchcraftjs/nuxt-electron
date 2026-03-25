@@ -8,7 +8,7 @@ const promiseResolveMap = new Map<string, {
 /**
  * Promisify an electron api and make it type safe so it can be awaited client side. Note that promisifyReply will throw if it can't find a window.
  *
- * ```ts[type.st]
+ * ```ts[types.ts]
  * export type ElectronApi = {
  * 	api: {
  * 		someApi: (apiParam: string, apiParam2: number) => Promise<void>
@@ -24,7 +24,7 @@ const promiseResolveMap = new Map<string, {
  * ```
  *
  * ```ts [main.ts]
- * import { promisifyReply } from "@witchcraft/nuxt-electron/runtime/electron"
+ * import { promisifyReply } from "@witchcraft/nuxt-electron/electron"
  * promisifyReply<
  * 	ElectronApi["api"]["someApi"]
  * >(ipcRenderer, MESSAGE.UNIQUE_KEY, (win, apiParam, apiParam2) => {
@@ -39,6 +39,8 @@ const promiseResolveMap = new Map<string, {
  * ```
  *
  * By default, calls will timeout and reject after 10 seconds. This can be changed by changing the timeout option.
+ *
+ * @deprecated Use {@link createApi} instead.
  */
 export function promisifyApi<
 	TKey extends string,

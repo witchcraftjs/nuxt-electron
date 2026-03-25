@@ -26,7 +26,7 @@
 		- Various helpers for setting up apis such as:
 			- `createBroadcasters/createBroadcastHandlers` for sending messages to all windows.
 			- `createWindowControlsApi` for calling close/minimize/maximize/pin from the renderer and an `ElectronWindowControls` component for rending a basic set.
-			- `promisifyApi`(preload) and `promisifyReply`(main) for easily creating and handling apis in the preload script.
+			- `createApi`(preload) and `handleApi`(main) for easily creating and handling apis in the preload script.
 	- See also [@witchcraft/nuxt-logger](https://github.com/witchcraftjs/nuxt-logger) for electron logging utilities.
 
 # Playground

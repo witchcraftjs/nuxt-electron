@@ -1,26 +1,14 @@
-import {
-	createPrivilegedProtocolScheme,
-	createProxiedProtocolHandler,
-	getPaths,
-	registerDevtoolsShortcuts,
-	STATIC,
-	useDevDataDir
-} from "@witchcraft/nuxt-electron/electron"
-import {
-	app,
-	BrowserWindow,
-	ipcMain,
-	Menu,
-	protocol,
-	session
-} from "electron"
+import { createPrivilegedProtocolScheme, createProxiedProtocolHandler, type ElectronIpcMessages, getPaths, handleApi, registerDevtoolsShortcuts, STATIC, useDevDataDir } from "@witchcraft/nuxt-electron/electron"
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { app, BrowserWindow, ipcMain, Menu, protocol, session } from "electron"
 
 app.enableSandbox()
 
 const protocolName = "app"
 const paths = getPaths(protocolName, {
 	// these allow the user to override the paths in production
-	// remove them if you don't want to allow it
+	// gate them if you don't want to allow it
+	// (e.g. ...(process.env.NODE_ENV === "production" ? {} : { windowUrl: ... }))
 	windowUrl: process.env.OVERRIDE_WINDOW_URL,
 	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL
 })
@@ -72,6 +60,18 @@ const defaultWebPreferences: Electron.WebPreferences = {
 ipcMain.on("test", () => {
 	logger.info({ ns: "main:test", msg: "Hello from main." })
 })
+
+handleApi("ping", (_event, message) => {
+	// eslint-disable-next-line no-console
+	console.log("Ping", message)
+	return `Pong`
+})
+handleApi("prefixed.ping", (_event, message) => {
+	// eslint-disable-next-line no-console
+	console.log("Prefixed Ping", message)
+	return `Pong (prefixed)`
+})
+
 
 void app.whenReady().then(async () => {
 	const partition = "persist:example"

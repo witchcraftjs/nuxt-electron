@@ -2,7 +2,11 @@ import { type BrowserWindow, ipcMain } from "electron"
 
 import { getEventWindow } from "./getEventWindow.js"
 
-/** See {@link promisifyApi} for more info. */
+/**
+ * See {@link promisifyApi} for more info.
+ *
+ * @deprecated Use {@link handleApi} instead.
+ */
 export function promisifyReply<
 	TFunction extends ((...args: any[]) => any),
 	TKey extends string = string,
