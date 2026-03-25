@@ -129,11 +129,6 @@ export function createProxiedProtocolHandler(
 	if (protocol.isProtocolHandled(protocolName)) {
 		throw new Error(`Protocol ${protocolName} is already handled.`)
 	}
-	if (routeProxyKeys.length > 0) {
-		if (!process.env.PUBLIC_SERVER_URL && !process.env.VITE_DEV_URL && !process.env.PUBLIC_SERVER_URL) {
-			throw new Error("You defined proxy routes but didn't set PUBLIC_SERVER_URL or VITE_DEV_URL set. This is required for the /api routes to work.")
-		}
-	}
 
 	let errorPage404: string | undefined
 	// note that while it would be nice to do protocol.isProtocolRegistered
