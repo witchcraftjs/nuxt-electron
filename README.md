@@ -61,7 +61,12 @@ See [#Usage on Nix](#Usage-on-Nix) for more details.
 ## Install
 ```bash
 pnpx nuxi module add @witchcraft/nuxt-electron
+```
 
+Be sure to shamefully hoist if using pnpm:
+
+```rc [.npmrc]
+shamefully-hoist=true
 ```
 ### Components
 
