@@ -1,7 +1,6 @@
 <template>
 <WButton
 	aria-label="Toggle Always On Top"
-	auto-title-from-aria
 	:border="false"
 	:class="twMerge(`
 			p-0
@@ -38,7 +37,9 @@
 </template>
 
 <script lang="ts" setup>
-import { twMerge } from "#imports"
+import WButton from "@witchcraft/ui/components/WButton"
+import { twMerge } from "@witchcraft/ui/utils/twMerge"
+
 import iOcticonPin16 from "~icons/octicon/pin-16"
 
 const emit = defineEmits<{

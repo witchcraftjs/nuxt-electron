@@ -17,7 +17,7 @@ catalog:
   '@nuxt/test-utils': ^3.23.0
   '@witchcraft/nuxt-logger': ^0.0.11
   '@witchcraft/nuxt-utils': ^0.3.6
-  '@witchcraft/ui': ^0.3.24
+  '@witchcraft/ui': 0.4.0-beta.11
   changelogen: ^0.6.2
   concurrently: ^9.2.1
   defu: ^6.1.4

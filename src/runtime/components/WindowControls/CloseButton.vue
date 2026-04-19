@@ -50,6 +50,8 @@
 </template>
 
 <script lang="ts" setup>
+import WButton from "@witchcraft/ui/components/WButton"
+
 const emit = defineEmits<{
 	(e: "action", action: "close"): void
 }>()

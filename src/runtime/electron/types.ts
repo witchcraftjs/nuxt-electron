@@ -18,6 +18,7 @@ export type ElectronIpcMessages = Flatten<OrToAnd<{
 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 }[keyof Register & `ElectronIpc${string}`] | {}>>
 
+// todo extract to util
 export type PathToObject<TPath extends string, TValue>
 	= TPath extends `${infer Head}.${infer Tail}`
 		? { [K in Head]: PathToObject<Tail, TValue> }
