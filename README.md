@@ -1,5 +1,6 @@
 # @witchcraft/nuxt-electron
 
+[![Release][release-src]][release-href]
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
@@ -406,6 +407,9 @@ Your packer should then create the final executables (into `.dist/electron/relea
 
 
 <!-- Badges -->
+[release-src]: https://github.com/witchcraftjs/nuxt-electron/actions/workflows/release.yml/badge.svg
+[release-href]: https://github.com/witchcraftjs/nuxt-electron/actions/workflows/release.yml
+
 [npm-version-src]: https://img.shields.io/npm/v/@witchcraft/nuxt-electron/latest.svg?style=flat&colorA=020420&colorB=00DC82
 [npm-version-href]: https://npmjs.com/package/@witchcraft/nuxt-electron
 
