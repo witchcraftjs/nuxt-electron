@@ -44,3 +44,20 @@ patchedDependencies:
 settings:
   catalogMode: strict
   cleanupUnusedCatalogs: false
+
+shamefullyHoist: true
+strictPeerDependencies: false
+
+minimumReleaseAgeExclude:
+  - "@alanscodelog/*"
+  - "@witchcraft/*"
+
+allowBuilds:
+  '@alanscodelog/eslint-config': false
+  '@alanscodelog/tsconfigs': false
+  '@parcel/watcher': false
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  unrs-resolver: false
+  vue-demi: false
