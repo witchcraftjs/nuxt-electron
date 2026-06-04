@@ -45,13 +45,6 @@ settings:
   catalogMode: strict
   cleanupUnusedCatalogs: false
 
-shamefullyHoist: true
-strictPeerDependencies: false
-
-minimumReleaseAgeExclude:
-  - "@alanscodelog/*"
-  - "@witchcraft/*"
-
 allowBuilds:
   '@alanscodelog/eslint-config': false
   '@alanscodelog/tsconfigs': false
@@ -61,3 +54,11 @@ allowBuilds:
   esbuild: true
   unrs-resolver: false
   vue-demi: false
+
+shamefullyHoist: true
+strictPeerDependencies: false
+minimumReleaseAge: 20160
+blockExoticSubdeps: true
+minimumReleaseAgeExclude:
+  - "@alanscodelog/*"
+  - "@witchcraft/*"
