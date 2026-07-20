@@ -6,9 +6,48 @@ import fs from "node:fs/promises"
 import path from "node:path"
 import { pathToFileURL } from "node:url"
 
+// what we're storing is pretty small (Record<string, path>) but just to be safe
+/**
+ * Stores file paths and proxy route URLs with an expiration time.
+ * Expired entries are lazily deleted on read and periodically cleaned on write.
+ */
+class TtlCache<TK, TV> {
+	map = new Map<TK, { value: TV, expiry: number }>()
+	ttlMs: number
 
-export const cache = new Map<string, string | undefined>()
-export const proxyCache = new Map<string, string | undefined>()
+	constructor(
+		/* 5 minutes by default */
+		ttlMs: number = 5 * 60 * 1000
+	) {
+		this.ttlMs = ttlMs
+	}
+
+	get(key: TK): TV | undefined {
+		const entry = this.map.get(key)
+		if (!entry) return undefined
+		if (Date.now() > entry.expiry) {
+			this.map.delete(key)
+			return undefined
+		}
+		return entry.value
+	}
+
+	set(key: TK, value: TV) {
+		this.map.set(key, { value, expiry: Date.now() + this.ttlMs })
+		// clean up expired entries (every 100 writes) to prevent unbounded growth
+		if (this.map.size % 100 === 0) this.#cleanup()
+	}
+
+	#cleanup() {
+		const now = Date.now()
+		for (const [key, entry] of this.map) {
+			if (now > entry.expiry) this.map.delete(key)
+		}
+	}
+}
+
+export const cache = new TtlCache<string, string | undefined>()
+export const proxyCache = new TtlCache<string, string | undefined>()
 const proxiedProperties: (keyof Request)[] = ["headers", "destination", "referrer", "referrerPolicy", "mode", "credentials", "cache", "redirect", "integrity", "keepalive"]
 
 async function getPathToServe(
@@ -43,7 +82,8 @@ async function getPathToServe(
 	return pathToServe
 }
 
-async function getFromCacheOr(cache: Map<string, string | undefined>, key: string, fn: (key: string) => Promise<string | undefined> | string | undefined, logger?: {	trace: (...args: any[]) => void }): Promise<string | undefined> {
+type Cacheable = { get(key: string): string | undefined, set(key: string, value: string | undefined): void }
+async function getFromCacheOr(cache: Cacheable, key: string, fn: (key: string) => Promise<string | undefined> | string | undefined, logger?: {	trace: (...args: any[]) => void }): Promise<string | undefined> {
 	let result = cache.get(key)
 	if (result) {
 		if (logger) {
