@@ -18,7 +18,6 @@ import type { RollupOutput, RollupWatcher } from "rollup"
 import type { ViteDevServer } from "vite"
 import { build, type ElectronOptions, startup } from "vite-plugin-electron"
 import { notBundle } from "vite-plugin-electron/plugin"
-import { externalizeDeps } from "vite-plugin-externalize-deps"
 
 
 // https://github.com/electron-vite/vite-plugin-electron/issues/251#issuecomment-2360153184
@@ -308,6 +307,14 @@ export default defineNuxtModule<ModuleOptions>({
 
 			const viteConfig = await viteConfigPromise
 
+			const externalDeps: (string | RegExp)[] = []
+			const appPackageJson = JSON.parse(await fs.readFile(path.join(nuxt.options.rootDir, "package.json"), "utf8"))
+			for (const depSection of ["dependencies", "optionalDependencies", "peerDependencies"] as const) {
+				for (const dep of Object.keys(appPackageJson[depSection] ?? {})) {
+					externalDeps.push(dep, new RegExp(`^${dep}(?:/.+)?$`))
+				}
+			}
+
 			const electronRuntimeConfig = defu(
 				options.electronOnlyRuntimeConfig,
 				nuxt.options.runtimeConfig.public
@@ -368,14 +375,16 @@ export default defineNuxtModule<ModuleOptions>({
 				{
 					build: {
 						outDir: electronBuildDir,
-						minify: false
+						minify: false,
+						rollupOptions: {
+							external: externalDeps
+						}
 					},
 					define: electronVariables,
 					resolve: {
 						alias: nuxt.options.alias,
 						extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"]
-					},
-					plugins: [externalizeDeps() as any]
+					}
 				})
 
 			const electronCliArgs = [

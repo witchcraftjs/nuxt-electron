@@ -45,8 +45,7 @@
 		"defu": "catalog:",
 		"electron": "catalog:",
 		"es-toolkit": "catalog:",
-		"vite-plugin-electron": "catalog:",
-		"vite-plugin-externalize-deps": "catalog:"
+		"vite-plugin-electron": "catalog:"
 	},
 	"peerDependencies": {
 		"@witchcraft/ui": "catalog:",

@@ -9,14 +9,14 @@ catalog:
   '@alanscodelog/eslint-config': ^6.3.1
   '@alanscodelog/semantic-release-config': ^6.0.2
   '@alanscodelog/tsconfigs': ^6.3.0
-  '@alanscodelog/utils': ^6.2.0
+  '@alanscodelog/utils': ^6.3.0
   '@nuxt/eslint-config': ^1.15.1
   '@nuxt/kit': ^4.3.1
   '@nuxt/module-builder': ^1.0.2
   '@nuxt/schema': ^4.3.1
   '@nuxt/test-utils': ^3.23.0
   '@witchcraft/nuxt-logger': ^0.0.11
-  '@witchcraft/nuxt-utils': ^0.3.6
+  '@witchcraft/nuxt-utils': ^0.3.10
   '@witchcraft/ui': ^0.5.0
   changelogen: ^0.6.2
   concurrently: ^9.2.1
@@ -33,8 +33,8 @@ catalog:
   thread-stream: ^3.1.0
   typescript: ^5.9.3
   unplugin-icons: ^22.5.0
+  vite: ^8.0.0-beta.15
   vite-plugin-electron: ^0.29.0
-  vite-plugin-externalize-deps: ^0.9.0
   vitest: ^3.2.4
   vue-tsc: ^3.2.4
 
@@ -54,6 +54,9 @@ allowBuilds:
   esbuild: true
   unrs-resolver: false
   vue-demi: false
+
+overrides:
+  vite: "catalog:"
 
 shamefullyHoist: true
 strictPeerDependencies: false
