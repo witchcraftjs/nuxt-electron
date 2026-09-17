@@ -1,13 +1,13 @@
-diff --git a/dist/chunks/build.mjs b/dist/chunks/build.mjs
-index 5fda3a794e76ff9286c3785d2df78fb9b02f5690..7129bd536875fa371f31f0c774c886e3e15f676e 100644
---- a/dist/chunks/build.mjs
-+++ b/dist/chunks/build.mjs
-@@ -54,7 +54,7 @@ const build = defineCommand({
-         {
-           input: "src/runtime/",
-           outDir: `${outDir}/runtime`,
--          addRelativeDeclarationExtensions: true,
-+          addRelativeDeclarationExtensions: false,
-           ext: "js",
-           pattern: [
-             "**",
+diff --git a/dist/build-Ach6kRrL.mjs b/dist/build-Ach6kRrL.mjs
+index d93b5463b8ef0e11d603aa8346bc9849ae8c2304..6056b3601dd2f7828537fbc72b54a04be19d2303 100644
+--- a/dist/build-Ach6kRrL.mjs
++++ b/dist/build-Ach6kRrL.mjs
+@@ -52,7 +52,7 @@ var build_default = defineCommand({
+ 			entries: ["src/module", {
+ 				input: "src/runtime/",
+ 				outDir: `${context.args.outDir}/runtime`,
+-				addRelativeDeclarationExtensions: true,
++				addRelativeDeclarationExtensions: false,
+ 				ext: "js",
+ 				pattern: [
+ 					"**",
