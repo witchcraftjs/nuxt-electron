@@ -247,7 +247,7 @@ Proxying server only page routes seems possible but complicated because each rou
 
 ### Runtime Config
 
-Anywhere in electron's renderer files you can also now use nuxt's public runtime config (only the public, you don't want to expose your server secrets to the electron app at all).
+Anywhere in electron's main files you can also now use nuxt's public runtime config using the special version from the module (only the public part, you don't want to expose your server secrets to the electron app at all). Module does some magic to strinfigy it into the `ELECTRON_RUNTIME_CONFIG` env variable and read it back out:
 
 ```ts
 import { useNuxtRuntimeConfig } from "@witchcraft/nuxt-electron/electron"
