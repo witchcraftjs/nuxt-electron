@@ -84,7 +84,7 @@ void app.whenReady().then(async () => {
 		protocolName,
 		paths.nuxtPublicDir,
 		proxies,
-		{ logger }
+		{ logger, session: ses }
 	)
 
 	const win = new BrowserWindow({

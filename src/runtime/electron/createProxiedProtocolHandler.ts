@@ -1,6 +1,6 @@
 import { keys } from "@alanscodelog/utils/keys"
 import { pick } from "@alanscodelog/utils/pick"
-import type { Protocol } from "electron"
+import type { Protocol, Session } from "electron"
 import { net } from "electron"
 import fs from "node:fs/promises"
 import path from "node:path"
@@ -146,7 +146,8 @@ export function createProxiedProtocolHandler(
 	>,
 	{
 		logger,
-		errorPage = "404.html"
+		errorPage = "404.html",
+		session
 	}: {
 		/**
 		 * Optional logger. It's suggested you not pass this unless you're traceging in dev mode as a lot of requests can be made.
@@ -163,12 +164,23 @@ export function createProxiedProtocolHandler(
 		 */
 		errorPage?: string
 
+		/**
+		 * The window session the requests should be made from, i.e. the same session whose `protocol` you passed first.
+		 *
+		 * `net.fetch` always uses the default session, so without this, cookies, cache and proxy settings of a partitioned window session are bypassed, and requests for a partitioned window go out with an empty cookie jar.
+		 */
+		session?: Session
+
 	} = {}
 ): void {
 	const routeProxyKeys = keys(routeProxies)
 	if (protocol.isProtocolHandled(protocolName)) {
 		throw new Error(`Protocol ${protocolName} is already handled.`)
 	}
+	// net.fetch is hardcoded to the default session, a partitioned window needs its own
+	const netFetch: typeof net.fetch = session
+		? (input, init) => session.fetch(input as Parameters<Session["fetch"]>[0], init)
+		: net.fetch
 
 	let errorPage404: string | undefined
 	// note that while it would be nice to do protocol.isProtocolRegistered
@@ -222,7 +234,7 @@ export function createProxiedProtocolHandler(
 					finalPath: cachedProxyResult
 				})
 			}
-			return net.fetch(cachedProxyResult, {
+			return netFetch(cachedProxyResult, {
 				...pick(request, proxiedProperties)
 			})
 		}
@@ -276,7 +288,7 @@ export function createProxiedProtocolHandler(
 					errorPath: pathToFileURL(errorPage404).toString()
 				})
 			}
-			const res = await net.fetch(pathToFileURL(errorPage404).toString(), {
+			const res = await netFetch(pathToFileURL(errorPage404).toString(), {
 				// see below
 				bypassCustomProtocolHandlers: true
 			})
@@ -295,7 +307,7 @@ export function createProxiedProtocolHandler(
 			})
 		}
 
-		const response = await net.fetch(finalPath, {
+		const response = await netFetch(finalPath, {
 			// avoid infinite loop if protocolName protocol is "file"
 			// or file is otherwise handled
 			bypassCustomProtocolHandlers: true
