@@ -147,7 +147,8 @@ Add the following to the package.json:
 		"dev:electron": "AUTO_OPEN=electron pnpm dev",
 		"launch:electron": "electron .",
 		"launch:electron:dev": "LOG_LEVEL=trace OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 electron .",
-		"build:electron": "BUILD_ELECTRON=true pnpm build",
+		// Use a custom env like "PRODUCTION_BUILD" to control the baking of env variables in the nuxt.config
+		"build:electron": "PRODUCTION_BUILD=true BUILD_ELECTRON=true pnpm build",
 		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder --config electron-builder-config.js",
 		"build:electron:no-pack": "APP_VERSION=0.0.0 SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
 		// write a dev desktop file for linux, see below
@@ -231,7 +232,9 @@ export default defineNuxtConfig({
 			// note the quotes for strings! this is a literal replacement that happens
 			// you also cannot access process.env dynamically if you want this to work (e.g. process.env[name])
 				? `"https://yoursite.com"`
-				: `undefined`
+				: `undefined`,
+			// This bakes "process.env.BAKED_IS_PRODUCTION" for use where runtime overriding should not be allowed
+			bakedIsProduction: process.env.PRODUCTION_BUILD === "true" ? `"true"` : `"false"`
 		},
 		// the module will set this to prerender: true
 		// you can override it in routeRules and create a spa without prerender if you need
