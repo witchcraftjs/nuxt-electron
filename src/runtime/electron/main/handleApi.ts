@@ -1,6 +1,6 @@
 import { ipcMain } from "electron"
 
-import type { ElectronIpcMessages } from "./types.js"
+import type { ElectronIpcMessages } from "../types.js"
 
 /**
  * Type safe wrapper around ipcMain.handle. See {@link createApi} for more info.

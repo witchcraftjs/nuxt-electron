@@ -1,4 +1,5 @@
-import { createPrivilegedProtocolScheme, createProxiedProtocolHandler, type ElectronIpcMessages, getPaths, handleApi, registerDevtoolsShortcuts, STATIC, useDevDataDir } from "@witchcraft/nuxt-electron/electron"
+import { createPrivilegedProtocolScheme, createProxiedProtocolHandler, getPaths, handleApi, registerDevtoolsShortcuts, useDevDataDir } from "@witchcraft/nuxt-electron/electron/main"
+import { STATIC, type ElectronIpcMessages } from "@witchcraft/nuxt-electron/electron"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { app, BrowserWindow, ipcMain, Menu, protocol, session } from "electron"
 

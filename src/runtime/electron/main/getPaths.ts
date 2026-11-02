@@ -2,7 +2,7 @@ import { unreachable } from "@alanscodelog/utils/unreachable"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { STATIC } from "./static.js"
+import { STATIC } from "../static.js"
 
 /**
  * Calculates the correct paths for the app to run in electron.

@@ -16,6 +16,22 @@
 			"types": "./dist/runtime/electron/index.d.ts",
 			"import": "./dist/runtime/electron/index.js"
 		},
+		"./electron/main": {
+			"types": "./dist/runtime/electron/main/index.d.ts",
+			"import": "./dist/runtime/electron/main/index.js"
+		},
+		"./electron/preload": {
+			"types": "./dist/runtime/electron/preload/index.d.ts",
+			"import": "./dist/runtime/electron/preload/index.js"
+		},
+		"./electron/renderer": {
+			"types": "./dist/runtime/electron/renderer/index.d.ts",
+			"import": "./dist/runtime/electron/renderer/index.js"
+		},
+		"./electron/*": {
+			"types": "./dist/runtime/electron/*.d.ts",
+			"import": "./dist/runtime/electron/*.js"
+		},
 		"./genDevDesktop": {
 			"import": "./genDevDesktop.js"
 		}

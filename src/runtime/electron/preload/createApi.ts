@@ -1,7 +1,7 @@
 import { set } from "@alanscodelog/utils/set"
 import { ipcRenderer } from "electron"
 
-import type { ElectronIpcMessages } from "./types.js"
+import type { ElectronIpcMessages } from "../types.js"
 
 /**
  * Type safe wrapper around ipcRenderer.invoke which also creates the api function at the proper path.
@@ -9,7 +9,8 @@ import type { ElectronIpcMessages } from "./types.js"
  * This makes every single part of the api type safe while avoiding repetition.
  *
  * ```ts [preload.ts]
- * import { mergeApi, createApi } from "@witchcraft/nuxt-electron/electron"
+ * import { mergeApi } from "@witchcraft/nuxt-electron/electron"
+ * import { createApi } from "@witchcraft/nuxt-electron/electron/preload"
  *
  * declare module "@witchcraft/nuxt-electron" {
  * 	interface Register {
@@ -45,7 +46,7 @@ import type { ElectronIpcMessages } from "./types.js"
  * ```
  *
  * ```ts [main.ts]
- * import { createApi } from "@witchcraft/nuxt-electron/electron"
+ * import { createApi } from "@witchcraft/nuxt-electron/electron/preload"
  * ipcHandle("my.test.method", (event, arg1, arg2) => { ... })
  * ipcHandle("avoidConflict.my.test.method", (event, arg1, arg2) => { ... })
  * ```

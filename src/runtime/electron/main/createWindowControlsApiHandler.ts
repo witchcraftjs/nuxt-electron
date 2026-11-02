@@ -1,8 +1,9 @@
 import type { BrowserWindow } from "electron"
 
-import { windowControlsMessageKey } from "./createWindowControlsApi.js"
 import { promisifyReply } from "./promisifyReply.js"
-import type { WindowControlsApi } from "./types.js"
+
+import { windowControlsMessageKey } from "../renderer/createWindowControlsApi.js"
+import type { WindowControlsApi } from "../types.js"
 
 export function createWindowControlsApiHandler(
 	/** Mostly for logging. Does not replace the action. */

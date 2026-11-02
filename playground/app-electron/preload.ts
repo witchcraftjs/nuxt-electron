@@ -1,9 +1,10 @@
-import { createApi, mergeApi } from "@witchcraft/nuxt-electron/electron"
+import { mergeApi } from "@witchcraft/nuxt-electron/electron"
+import { createApi } from "@witchcraft/nuxt-electron/electron/preload"
 import { createElectronLoggerApi } from "@witchcraft/nuxt-logger/electron"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { contextBridge, ipcRenderer } from "electron"
 
-declare module "@witchcraft/nuxt-electron/electron" {
+declare module "@witchcraft/nuxt-electron/electron/types" {
 	export interface Register {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		ElectronIpcPing: {

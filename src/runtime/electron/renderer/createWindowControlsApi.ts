@@ -1,7 +1,8 @@
 import type { IpcRenderer } from "electron"
 
 import { promisifyApi } from "./promisifyApi.js"
-import type { WindowControlsApi } from "./types.js"
+
+import type { WindowControlsApi } from "../types.js"
 
 const key = "window-control-action"
 /**

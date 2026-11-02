@@ -24,7 +24,7 @@ const promiseResolveMap = new Map<string, {
  * ```
  *
  * ```ts [main.ts]
- * import { promisifyReply } from "@witchcraft/nuxt-electron/electron"
+ * import { promisifyReply } from "@witchcraft/nuxt-electron/electron/main"
  * promisifyReply<
  * 	ElectronApi["api"]["someApi"]
  * >(ipcRenderer, MESSAGE.UNIQUE_KEY, (win, apiParam, apiParam2) => {
