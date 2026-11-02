@@ -427,39 +427,46 @@ export default defineNuxtModule<ModuleOptions>({
 							}]
 						: []
 				)
-			].map(entry => ({
-				vite: {
-					mode: process.env.NODE_ENV,
-					...electronViteOptions,
-					build: {
-						watch: useWatch
-							? {
-									include: [`${srcDir}/**/*`]
-								}
-							: null,
-						lib: {
-							entry: entry.entry,
-							formats: entry.entry.includes("preload") ? ["cjs"] : ["es"],
-							fileName: () => entry.entry.includes("preload") ? "[name].cjs" : "[name].mjs"
-						},
-						...electronViteOptions.build
-					},
-					plugins: [
-						autoOpen
-							? {
-									name: "plugin-start-electron",
-									async closeBundle() {
-										void entry.onStart?.()
+			].map(entry => {
+				const isPreload = entry.entry.includes("preload")
+				return {
+					vite: {
+						mode: process.env.NODE_ENV,
+						...electronViteOptions,
+						build: {
+							watch: useWatch
+								? {
+										include: [`${srcDir}/**/*`]
 									}
-								}
-							: undefined,
-						// not bundle breaks preload because it tries to required from node_modules
-						// and sandboxed windows can't do that
-						...(!isElectronBuild && !entry.entry.includes("preload") ? [notBundle(options.notBundleOptions)] : []),
-						...(electronViteOptions.plugins ?? [])
-					]
+								: null,
+							lib: {
+								entry: entry.entry,
+								formats: isPreload ? ["cjs"] : ["es"],
+								fileName: () => isPreload ? "[name].cjs" : "[name].mjs"
+							},
+							...electronViteOptions.build,
+							rollupOptions: {
+								...electronViteOptions.build?.rollupOptions,
+								...(isPreload ? { external: [] } : {})
+							}
+						},
+						plugins: [
+							autoOpen
+								? {
+										name: "plugin-start-electron",
+										async closeBundle() {
+											void entry.onStart?.()
+										}
+									}
+								: undefined,
+							// not bundle breaks preload because it tries to required from node_modules
+							// and sandboxed windows can't do that
+							...(!isElectronBuild && !isPreload ? [notBundle(options.notBundleOptions)] : []),
+							...(electronViteOptions.plugins ?? [])
+						]
+					}
 				}
-			}))
+			})
 
 			logger.debug(builds)
 
