@@ -48,7 +48,6 @@ class TtlCache<TK, TV> {
 
 export const cache = new TtlCache<string, string | undefined>()
 export const proxyCache = new TtlCache<string, string | undefined>()
-const proxiedProperties: (keyof Request)[] = ["headers", "destination", "referrer", "referrerPolicy", "mode", "credentials", "cache", "redirect", "integrity", "keepalive"]
 
 async function getPathToServe(
 	originalPath: string,
@@ -135,7 +134,7 @@ export function createProxiedProtocolHandler(
 		| {
 			url: string
 			/** Override how the path is merged with the url. The default literally just concatenates url + path. */
-			convertPath?: (proxyKey: string, url: string, requestPath: string) => string
+			convertPath?: (proxyKey: string, url: string, requestPath: string, query: string) => string
 			ignore?: false
 		}
 		|	{
@@ -147,7 +146,21 @@ export function createProxiedProtocolHandler(
 	{
 		logger,
 		errorPage = "404.html",
-		session
+		session,
+		proxiedProperties = [
+			"method",
+			"headers",
+			"body",
+			"destination",
+			"referrer",
+			"referrerPolicy",
+			"mode",
+			"credentials",
+			"cache",
+			"redirect",
+			"integrity",
+			"keepalive"
+		] as (keyof Request)[]
 	}: {
 		/**
 		 * Optional logger. It's suggested you not pass this unless you're traceging in dev mode as a lot of requests can be made.
@@ -170,6 +183,8 @@ export function createProxiedProtocolHandler(
 		 * `net.fetch` always uses the default session, so without this, cookies, cache and proxy settings of a partitioned window session are bypassed, and requests for a partitioned window go out with an empty cookie jar.
 		 */
 		session?: Session
+		/** Request properties forwarded to the proxied request. The url is always replaced. */
+		proxiedProperties?: (keyof Request)[]
 
 	} = {}
 ): void {
@@ -208,7 +223,7 @@ export function createProxiedProtocolHandler(
 				const proxyUrl = typeof proxyEntry === "string" ? proxyEntry : proxyEntry?.url
 
 				const finalPath = typeof proxyEntry === "object" && proxyEntry?.convertPath
-					? proxyEntry.convertPath(proxyKey, proxyUrl, requestPath)
+					? proxyEntry.convertPath(proxyKey, proxyUrl, requestPath, parsedUrl.search)
 					: proxyUrl + requestPath
 
 				if (logger) {
@@ -234,9 +249,10 @@ export function createProxiedProtocolHandler(
 					finalPath: cachedProxyResult
 				})
 			}
-			return netFetch(cachedProxyResult, {
-				...pick(request, proxiedProperties)
-			})
+			const init = pick(request, proxiedProperties) as RequestInit
+			// fetch rejects a streamed body unless the stream mode is declared
+			if (init.body) (init as any).duplex = "half"
+			return netFetch(cachedProxyResult + parsedUrl.search, init)
 		}
 
 		const originalPath = path.join(basePath, requestPath)
