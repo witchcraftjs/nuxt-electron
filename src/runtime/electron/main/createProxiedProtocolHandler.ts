@@ -147,6 +147,7 @@ export function createProxiedProtocolHandler(
 		logger,
 		errorPage = "404.html",
 		session,
+		modifyRequest,
 		proxiedProperties = [
 			"method",
 			"headers",
@@ -185,6 +186,7 @@ export function createProxiedProtocolHandler(
 		session?: Session
 		/** Request properties forwarded to the proxied request. The url is always replaced. */
 		proxiedProperties?: (keyof Request)[]
+		modifyRequest?: (init: RequestInit, url: string) => RequestInit
 
 	} = {}
 ): void {
@@ -249,10 +251,17 @@ export function createProxiedProtocolHandler(
 					finalPath: cachedProxyResult
 				})
 			}
-			const init = pick(request, proxiedProperties) as RequestInit
+			let init = pick(request, proxiedProperties) as RequestInit
 			// fetch rejects a streamed body unless the stream mode is declared
 			if (init.body) (init as any).duplex = "half"
-			return netFetch(cachedProxyResult + parsedUrl.search, init)
+			const finalUrl = cachedProxyResult + parsedUrl.search
+			const headers = new Headers(init.headers)
+			headers.set("origin", new URL(finalUrl).origin)
+			headers.set("referer", finalUrl)
+			headers.set("sec-fetch-site", "same-origin")
+			init.headers = headers
+			if (modifyRequest) init = modifyRequest(init, finalUrl)
+			return netFetch(finalUrl, init)
 		}
 
 		const originalPath = path.join(basePath, requestPath)
