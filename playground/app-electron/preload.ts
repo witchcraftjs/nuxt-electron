@@ -1,5 +1,5 @@
 import { mergeApi } from "@witchcraft/nuxt-electron/electron"
-import { createApi } from "@witchcraft/nuxt-electron/electron/preload"
+import { assertSecureContext, createApi } from "@witchcraft/nuxt-electron/electron/preload"
 import { createElectronLoggerApi } from "@witchcraft/nuxt-logger/electron"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { contextBridge, ipcRenderer } from "electron"
@@ -19,6 +19,8 @@ declare module "@witchcraft/nuxt-electron/electron/types" {
 		}
 	}
 }
+
+assertSecureContext()
 
 // eslint-disable-next-line no-console
 console.log("---preload---")

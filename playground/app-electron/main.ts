@@ -1,5 +1,6 @@
+import { type ElectronIpcMessages, STATIC } from "@witchcraft/nuxt-electron/electron"
+import { NUXT_ELECTRON_ERROR } from "@witchcraft/nuxt-electron/electron/types"
 import { createPrivilegedProtocolScheme, createProxiedProtocolHandler, getPaths, handleApi, registerDevtoolsShortcuts, useDevDataDir } from "@witchcraft/nuxt-electron/electron/main"
-import { STATIC, type ElectronIpcMessages } from "@witchcraft/nuxt-electron/electron"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { app, BrowserWindow, ipcMain, Menu, protocol, session } from "electron"
 
@@ -97,6 +98,13 @@ void app.whenReady().then(async () => {
 	})
 
 	windows.push(win)
+
+	// reports preload errors which are otherwise silent
+	win.webContents.on("preload-error", (_event, eventPath, error) => {
+		logger.error({ ns: "main:preload", eventPath, error: error.message })
+		// can be used to catch the assertSecureContext always hard throw for that type of error
+		if (error.name === NUXT_ELECTRON_ERROR.INSECURE_CONTEXT) app.exit(1)
+	})
 
 	registerDevtoolsShortcuts(win)
 

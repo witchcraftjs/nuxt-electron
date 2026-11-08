@@ -1,4 +1,9 @@
+import { enumFromArray } from "@alanscodelog/utils/enumFromArray"
 import type { AnyFunction, Flatten, OrToAnd } from "@alanscodelog/utils/types"
+
+export const NUXT_ELECTRON_ERROR = enumFromArray([
+	"INSECURE_CONTEXT"
+], "NUXT_ELECTRON_ERROR.")
 
 export type WindowControlsApi = (action: "close" | "minimize" | "toggleMaximize" | "togglePin")	=> Promise<void>
 
