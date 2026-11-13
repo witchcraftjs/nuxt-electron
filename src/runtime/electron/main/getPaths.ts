@@ -10,11 +10,13 @@ import { STATIC } from "../static.js"
  *
  * Paths are not overridable in production unless you pass the variables that can override them.
  *
+ * Whether the app is considered to be in production is determined by the optional isProduction parameter. It should be set to something like the example baked production env in the readme.
+ *
  * ```ts
  * const paths = getPaths("app", {
  * 	windowUrl: process.env.OVERRIDE_WINDOW_URL,
  * 	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL
- * })
+ * }, process.env.BAKED_IS_PRODUCTION === "true")
  * ```
  */
 export function getPaths(
@@ -22,7 +24,8 @@ export function getPaths(
 	overridingEnvs: Record<string, string | undefined> = {
 		windowUrl: undefined,
 		publicServerUrl: undefined
-	}
+	},
+	isProduction?: boolean
 ): {
 	windowUrl: string
 	publicServerUrl: string
@@ -56,7 +59,7 @@ export function getPaths(
 		}
 	}
 
-	if (process.env.NODE_ENV !== "production" && process.env.VITE_DEV_SERVER_URL) {
+	if (!isProduction && process.env.VITE_DEV_SERVER_URL) {
 		return {
 			...base,
 			windowUrl: `${process.env.VITE_DEV_SERVER_URL}${STATIC.ELECTRON_ROUTE}`
