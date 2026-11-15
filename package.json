@@ -51,7 +51,12 @@
 		"lint": "pnpm lint:eslint && pnpm lint:types",
 		"lint:eslint": "eslint \"{src,test,playground/app}/**/*.{ts,vue}\" \"*.{js,cjs,mjs,ts}\"",
 		"lint:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
-		"test": "echo \"No tests\""
+		"test": "pnpm test:electron",
+		"test:electron": "pnpm --dir playground test:electron",
+		"test:electron:only": "pnpm --dir playground test:electron:only",
+		"test:electron:dev": "pnpm --dir playground test:electron:dev",
+		"test:ci": "pnpm --dir playground test:ci",
+		"test:server": "pnpm --dir playground test:server"
 	},
 	"dependencies": {
 		"@alanscodelog/utils": "catalog:",
@@ -83,6 +88,8 @@
 		"@nuxt/module-builder": "catalog:",
 		"@nuxt/schema": "catalog:",
 		"@nuxt/test-utils": "catalog:",
+		"@playwright/test": "catalog:",
+		"playwright-core": "catalog:",
 		"@types/node": "latest",
 		"changelogen": "catalog:",
 		"eslint": "catalog:",

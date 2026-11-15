@@ -1,6 +1,6 @@
 import { mergeApi } from "@witchcraft/nuxt-electron/electron"
 import { assertSecureContext, createApi } from "@witchcraft/nuxt-electron/electron/preload"
-import { createElectronLoggerApi } from "@witchcraft/nuxt-logger/electron"
+import { createElectronLoggerApi } from "@witchcraft/nuxt-logger/electron/preload"
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { contextBridge, ipcRenderer } from "electron"
 
@@ -33,3 +33,7 @@ contextBridge.exposeInMainWorld("electron", {
 		createApi("ping", "prefixed")
 	)
 })
+
+if (process.env.BAKED_IS_PRODUCTION !== "true" && process.env.TEST === "true") {
+	contextBridge.exposeInMainWorld("__IS_TEST", true)
+}

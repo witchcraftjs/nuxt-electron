@@ -51,11 +51,11 @@ export default defineNuxtConfig({
 		additionalElectronVariables: {
 			// this will hardcode `process.env.PUBLIC_SERVER_URL` to the server url in production
 			// this means getPaths().publicServerUrl will always return your site url (see getPaths) unless you allow getPaths an override (see it for details)
-			publicServerUrl: process.env.NODE_ENV === "production"
 			// note the quotes for strings! this is a literal replacement that happens
 			// you also cannot access process.env dynamically if you want this to work (e.g. process.env[name])
-				? `"https://yoursite.com"`
-				: `undefined`
+			publicServerUrl: `"https://yoursite.com"`,
+			// nuxi build always sets NODE_ENV=production, and the shipped app launches without it, so production has to be marked explicitly or every build looks like production
+			bakedIsProduction: process.env.PRODUCTION_BUILD === "true" ? `"true"` : `"false"`
 		},
 		electronBuildPackScript: "pnpm build:electron:pack",
 		electronViteOptions: {

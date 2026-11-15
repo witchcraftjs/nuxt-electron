@@ -16,9 +16,17 @@
 		"dev:electron": "AUTO_OPEN=electron pnpm dev",
 		"launch:electron": "electron .",
 		"launch:electron:dev": "LOG_LEVEL=trace OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 electron .",
-		"build:electron": "BUILD_ELECTRON=true pnpm build",
+		"build:electron": "PRODUCTION_BUILD=true BUILD_ELECTRON=true pnpm build",
 		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder --publish=never --config electron-builder-config.js",
 		"build:electron:no-pack": "APP_VERSION=0.0.0 SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
+		"======= tests": "=======",
+		"test": "pnpm test:electron",
+		"test:server": "TEST=true pnpm dev",
+		"test:ci": "pnpm build:electron:no-pack && xvfb-run -a env TEST=true NUXT_PORT=3000 playwright test --project=electron",
+		"test:electron": "pnpm build:electron:no-pack && pnpm test:electron:only",
+		"test:electron:only": "TEST=true NUXT_PORT=$(getPortNuxt) playwright test --project=electron",
+		"test:electron:dev": "TEST_ELECTRON_DEV=1 pnpm test:electron:only",
+		"test:electron:full": "concurrently --raw --handle-input --kill-others \"pnpm test:server\" \"pnpm test:electron\"",
 		"preview:electron:dev": "concurrently --kill-others \"pnpm preview\" \"sleep 2 && pnpm launch:electron:dev\"",
 		"gen:dev:electron:desktop": "node node_modules/@witchcraft/nuxt-electron/genDevDesktop.js YOURAPPNAME"
 	},
@@ -44,6 +52,8 @@
 	"devDependencies": {
 		"electron": "catalog:",
 		"concurrently": "catalog:",
-		"electron-builder": "catalog:"
+		"electron-builder": "catalog:",
+		"@playwright/test": "catalog:",
+		"playwright-core": "catalog:"
 	}
 }

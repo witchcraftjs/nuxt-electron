@@ -27,9 +27,17 @@ jobs:
         uses: alanscodelog/actions/.github/actions/setup@master
         with:
           USE_LOCKFILE: ${{ vars.USE_LOCKFILE }}
+          INSTALL_PLAYWRIGHT: "true"
 
       - name: Build
         uses: alanscodelog/actions/.github/actions/build@master
+        env:
+          NUXT_PORT: "3000"
+        with:
+          test_script: "pnpm test:ci"
+          server_script: "pnpm --dir playground test:server"
+          server_health_url: "http://localhost:3000/api/test"
+          server_ready_url: "http://localhost:3000/"
 
       - name: Release
         uses: alanscodelog/actions/.github/actions/release@master

@@ -9,6 +9,7 @@ dist
 .data
 .build-*
 .user-data-dir
+.user-data-dir-test
 
 .env
 
@@ -20,5 +21,6 @@ coverage
 
 .env
 .devenv
-.direnv
 .npmrc
+playground/playwright-report/
+playground/test-results/

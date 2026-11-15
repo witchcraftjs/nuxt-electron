@@ -138,7 +138,7 @@ Add the following to the package.json:
 	"description": "Your app description",
 	"author": "Your Name",
 	"repository" :"...",
-	"main": ".dist/electron/build/main.cjs",
+	"main": ".dist/electron/build/main.mjs",
 	"scripts": {
 		"dev": "nuxi dev",
 		"build": "nuxi build",
@@ -147,9 +147,11 @@ Add the following to the package.json:
 		"dev:electron": "AUTO_OPEN=electron pnpm dev",
 		"launch:electron": "electron .",
 		"launch:electron:dev": "LOG_LEVEL=trace OVERRIDE_PUBLIC_SERVER_URL=http://localhost:3000 electron .",
-		// Use a custom env like "PRODUCTION_BUILD" to control the baking of env variables in the nuxt.config
+		// release build
+		// use a custom env like "PRODUCTION_BUILD" to control the baking of the "baked" production env
 		"build:electron": "PRODUCTION_BUILD=true BUILD_ELECTRON=true pnpm build",
 		"build:electron:pack": "APP_VERSION=0.0.0 electron-builder --config electron-builder-config.js",
+		// local dev build, could be used for testing (note the lack of the baked env control)
 		"build:electron:no-pack": "APP_VERSION=0.0.0 SKIP_ELECTRON_PACK=true BUILD_ELECTRON=true nuxi build",
 		// write a dev desktop file for linux, see below
 		"preview:electron:dev": "concurrently --kill-others \"pnpm preview\" \"sleep 2 && pnpm launch:electron:dev\"",
@@ -165,9 +167,9 @@ Run `pnpm dev:electron`. This will both launch nuxt and open electron.
 
 Alternatively, run the server and electron seperately:
 
-Run `pnpm dev` to start the nuxt dev server. The dev version of the app will be written to `.dist/electron/build/main.cjs`.
+Run `pnpm dev` to start the nuxt dev server. The dev version of the app will be written to `.dist/electron/build/main.mjs`.
 
-In a seperate terminal run `pnpm launch:electron` to start the electron app (this will do `electron .` which will run the configured `main` property, aka `.dist/electron/build/main.cjs`).
+In a seperate terminal run `pnpm launch:electron` to start the electron app (this will do `electron .` which will run the configured `main` property, aka `.dist/electron/build/main.mjs`).
 
 #### Notes
 By default the module will not open electron. You must set `process.env.AUTO_OPEN` to include the string `electron` or set `autoOpen `in the options to true, hence the seperate `dev:electron` script.
@@ -178,7 +180,7 @@ The idea is if you use other platform modules as well, you'd do `AUTO_OPEN=elect
 
 Build the regular nuxt app with `pnpm build` then build the electron app with `pnpm build:electron` or `pnpm build:electron:no-pack` (if you just want to test, you can skip the packing).
 
-In this case, the build written to `.dist/electron/build/main.cjs` is the **production** build.
+In this case, the build written to `.dist/electron/build/main.mjs` is the **production** build.
 
 To run the built production server and the production app proxied to this server, use `pnpm preview:electron:dev`.
 
@@ -226,14 +228,13 @@ export default defineNuxtConfig({
 	},
 	electron: {
 		additionalElectronVariables: {
-			// this will hardcode `process.env.PUBLIC_SERVER_URL` to the server url in production
+			// this will hardcode `process.env.PUBLIC_SERVER_URL` to the server url
 			// this means getPaths().publicServerUrl will always return your site url (see getPaths) unless you allow getPaths an override (see it for details)
-			publicServerUrl: process.env.NODE_ENV === "production"
 			// note the quotes for strings! this is a literal replacement that happens
 			// you also cannot access process.env dynamically if you want this to work (e.g. process.env[name])
-				? `"https://yoursite.com"`
-				: `undefined`,
-			// This bakes "process.env.BAKED_IS_PRODUCTION" for use where runtime overriding should not be allowed
+			publicServerUrl: `"https://yoursite.com"`,
+			// this bakes the flag so it is available as `process.env.BAKED_IS_PRODUCTION`, pass `process.env.BAKED_IS_PRODUCTION === "true"` to getPaths as `isProduction` for use where runtime overriding should not be allowed
+			// the controlling env name and the baked name are just suggestions
 			bakedIsProduction: process.env.PRODUCTION_BUILD === "true" ? `"true"` : `"false"`
 		},
 		// the module will set this to prerender: true
@@ -247,6 +248,30 @@ export default defineNuxtConfig({
 **NOTE: The proxies only work for api calls. They do not work for pages.**
 
 Proxying server only page routes seems possible but complicated because each route's resource calls must also be proxied. I don't think it's worth the pain. It's easier to make sure the electron app never access server only routes.
+
+#### Baked Production Flag
+
+Apps cannot tell when they are in production unless you bake an env. I suggest something like `BAKED_IS_PRODUCTION`. A flag like this is useful for controlling whether url overrides are allowed (e.g. for testing purposes) or not.
+
+```ts [nuxt.config.ts]
+electron: {
+	additionalElectronVariables: {
+		bakedIsProduction: process.env.PRODUCTION_BUILD === "true" ? `"true"` : `"false"`
+	}
+}
+```
+
+
+Pass the flag to `getPaths` as `isProduction` and gate any overrides you want to gate.
+
+```ts [app-electron/main.ts]
+const paths = getPaths(protocolName, {
+	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL,
+	...(process.env.BAKED_IS_PRODUCTION === "true"
+		? {}
+		: { windowUrl: process.env.OVERRIDE_WINDOW_URL })
+}, process.env.BAKED_IS_PRODUCTION === "true")
+```
 
 ### Runtime Config
 
@@ -301,7 +326,7 @@ DEBUG=true LOG_LEVEL=trace nix run "github:thiagokokada/nix-alien#nix-alien" -- 
 
 Apart from that nix has some additional goodies.
 
-First there flake with a devenv based shell and direnv support. If you have direnv run `direnv allow .` in the project root. Otherwise run `nix develop`.
+First there is a devenv based shell. Run `devenv shell` in the project root. Otherwise run `nix develop`.
 
 Nearly everything should work, except the build electron-builder builds. You can do `nix run` instead.
 

@@ -8,12 +8,12 @@ app.enableSandbox()
 
 const protocolName = "app"
 const paths = getPaths(protocolName, {
-	// these allow the user to override the paths in production
-	// gate them if you don't want to allow it
-	// (e.g. ...(process.env.NODE_ENV === "production" ? {} : { windowUrl: ... }))
-	windowUrl: process.env.OVERRIDE_WINDOW_URL,
-	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL
-})
+	publicServerUrl: process.env.OVERRIDE_PUBLIC_SERVER_URL,
+	// windowUrl is only overridable in non-production builds
+	...(process.env.BAKED_IS_PRODUCTION === "true"
+		? {}
+		: { windowUrl: process.env.OVERRIDE_WINDOW_URL })
+}, process.env.BAKED_IS_PRODUCTION === "true")
 
 const windows: BrowserWindow[] = []
 
@@ -23,7 +23,7 @@ if (!import.meta.dev) {
 }
 
 /** Optional @witchcraft/nuxt-logger usage */
-import { useElectronLogger } from "@witchcraft/nuxt-logger/electron"
+import { useElectronLogger } from "@witchcraft/nuxt-logger/electron/main"
 import path from "node:path"
 
 
@@ -90,7 +90,7 @@ void app.whenReady().then(async () => {
 	)
 
 	const win = new BrowserWindow({
-		title: app.getName(),
+		title: `${app.getName()}${process.env.TEST === "true" ? " (test)" : ""}`,
 		webPreferences: {
 			...defaultWebPreferences,
 			session: ses
