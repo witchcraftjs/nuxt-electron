@@ -105,6 +105,16 @@ export interface ModuleOptions {
 	 */
 	// importing the type from vite is causing build issues :/
 	electronViteOptions: ElectronOptions["vite"]
+	/**
+	 * Deps to leave external in the electron main build. Receives the names derived from your package.json dependencies, optionalDependencies and peerDependencies, and returns the names (or regexes) to use. Names get a subpath matcher generated, regexes are passed through.
+	 *
+	 * Can be used to filter (and therefore bundle) some deps that are normally externalized.
+	 *
+	 * The module always removes itself from this list so it can be bundled (as it relies on the bundling to bake the STATIC runtime paths.
+	 *
+	 * Cannot be used in combination with `electronViteOptions.build.rollupOptions.external`. Only one or the other can be used.
+	 */
+	externalDeps?: (derivedNames: string[]) => (string | RegExp)[]
 	notBundleOptions: Parameters<typeof notBundle>[0]
 	/**
 	 * Additional variables to "bake" into the electron build. Note these must be quoted if they are strings.
@@ -185,6 +195,13 @@ export default defineNuxtModule<ModuleOptions>({
 		if (!options.enable) { return }
 		const moduleName = "@witchcraft/nuxt-electron"
 		const logger = useLogger(moduleName)
+
+		if (
+			options.externalDeps !== undefined
+			&& options.electronViteOptions?.build?.rollupOptions?.external !== undefined
+		) {
+			logger.error(`[${moduleName}]: externalDeps and electronViteOptions.build.rollupOptions.external can't be used at the same time, the rollup option always wins. Set one or the other but not both.`)
+		}
 		const { resolvePath, resolve } = createResolver(import.meta.url)
 
 		addComponentsDir({
@@ -309,9 +326,19 @@ export default defineNuxtModule<ModuleOptions>({
 
 			const externalDeps: (string | RegExp)[] = []
 			const appPackageJson = JSON.parse(await fs.readFile(path.join(nuxt.options.rootDir, "package.json"), "utf8"))
+			const dependentNames: string[] = []
 			for (const depSection of ["dependencies", "optionalDependencies", "peerDependencies"] as const) {
 				for (const dep of Object.keys(appPackageJson[depSection] ?? {})) {
-					externalDeps.push(dep, new RegExp(`^${dep}(?:/.+)?$`))
+					// this module is always bundled so its baked values survive
+					if (dep === moduleName || dependentNames.includes(dep)) { continue }
+					dependentNames.push(dep)
+				}
+			}
+			for (const entry of options.externalDeps?.(dependentNames) ?? dependentNames) {
+				if (typeof entry === "string") {
+					externalDeps.push(entry, new RegExp(`^${entry.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:/.+)?$`))
+				} else {
+					externalDeps.push(entry)
 				}
 			}
 
@@ -375,10 +402,7 @@ export default defineNuxtModule<ModuleOptions>({
 				{
 					build: {
 						outDir: electronBuildDir,
-						minify: false,
-						rollupOptions: {
-							external: externalDeps
-						}
+						minify: false
 					},
 					define: electronVariables,
 					resolve: {
@@ -386,6 +410,9 @@ export default defineNuxtModule<ModuleOptions>({
 						extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"]
 					}
 				})
+			// set after the merge, defu would union it with a value set in electronViteOptions
+			electronViteOptions.build!.rollupOptions ??= {}
+			electronViteOptions.build!.rollupOptions.external ??= externalDeps
 
 			const electronCliArgs = [
 				".",
