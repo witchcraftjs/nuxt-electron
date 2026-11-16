@@ -28,6 +28,10 @@
 			"types": "./dist/runtime/electron/renderer/index.d.ts",
 			"import": "./dist/runtime/electron/renderer/index.js"
 		},
+		"./electron/test": {
+			"types": "./dist/runtime/electron/test/index.d.ts",
+			"import": "./dist/runtime/electron/test/index.js"
+		},
 		"./electron/*": {
 			"types": "./dist/runtime/electron/*.d.ts",
 			"import": "./dist/runtime/electron/*.js"
