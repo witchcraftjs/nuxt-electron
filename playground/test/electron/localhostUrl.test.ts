@@ -21,7 +21,8 @@ test("localhostUrl helper works with NUXT_PORT and local cert envs", () => {
 		delete process.env.NUXT_PORT
 		delete process.env.LOCALHOST_KEY_PEM
 		delete process.env.LOCALHOST_PEM
-		expect(localhostUrl()).toBe("http://localhost:3000")
+		expect(() => localhostUrl()).toThrow("localhostUrl: pass a port or set NUXT_PORT.")
+		expect(localhostUrl("4000")).toBe("http://localhost:4000")
 	} finally {
 		if (savedPort === undefined) delete process.env.NUXT_PORT
 		else process.env.NUXT_PORT = savedPort
