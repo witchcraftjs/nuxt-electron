@@ -21,7 +21,7 @@ export function launchElectron({
 	windowTimeout = 30_000
 }: {
 	/** Points the app at serverUrl with VITE_DEV_SERVER_URL instead of at its bundlePrefix. Only works when the app leaves the windowUrl override open, so a baked production flag must be false. */
-	useDevMode?: boolean
+	useDevMode?: boolean | string
 	/** Directory the app is launched from, becomes the electron process cwd. A module playground passes its playground dir, an app passes its repo root. */
 	appDir: string
 	/** Profile directory, it will be wiped before every launch. Point it somewhere gitignored. Must be within appDir for safety. */
